@@ -2019,7 +2019,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 validatedInput = JSON.parse(this.walletsJson);
 
                 if (!validatedInput) {
-                  _context3.next = 10;
+                  _context3.next = 9;
                   break;
                 }
 
@@ -2030,7 +2030,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return this.makeToast("Wallets imported !", "check-circle", "success");
 
               case 8:
-                window.location.reload();
                 this.$nextTick(
                 /*#__PURE__*/
                 _asyncToGenerator(
@@ -2050,23 +2049,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   }, _callee2);
                 })));
 
-              case 10:
-                _context3.next = 17;
+              case 9:
+                _context3.next = 16;
                 break;
 
-              case 12:
-                _context3.prev = 12;
+              case 11:
+                _context3.prev = 11;
                 _context3.t0 = _context3["catch"](0);
                 console.log("Invalid json");
-                _context3.next = 17;
+                _context3.next = 16;
                 return this.makeToast("Invalid JSON format", "times-circle", "error");
 
-              case 17:
+              case 16:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3, this, [[0, 12]]);
+        }, _callee3, this, [[0, 11]]);
       }));
 
       function submit() {

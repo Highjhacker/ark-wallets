@@ -48,18 +48,22 @@
             async submit() {
                 try {
                     let validatedInput = JSON.parse(this.walletsJson);
+
                     if (validatedInput) {
                         let existing = localStorage.getItem("addresses");
                         existing = existing ? JSON.parse(existing) : [];
+
                         localStorage.setItem("addresses", JSON.stringify(existing.concat(validatedInput)));
+
                         await this.makeToast("Wallets imported !", "check-circle", "success");
-                        window.location.reload();
+
                         this.$nextTick(async () => {
                             window.location.reload();
                         });
                     }
                 } catch (e) {
                     console.log("Invalid json");
+
                     await this.makeToast("Invalid JSON format", "times-circle", "error");
                 }
             }
