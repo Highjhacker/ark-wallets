@@ -2795,7 +2795,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 27:
                 delegateData = {
                   'address': this.walletAddress,
-                  'url': this.arkvatarUrl
+                  'arkvatarUrl': this.arkvatarUrl
                 }; // Address isn't present, add it
 
                 this.$root.$data.wallets.push(delegateData);

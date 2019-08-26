@@ -7,7 +7,31 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Arkwallets') }}</title>
+
+    <meta name="description" itemprop="description" content="Arkwallets allows to easily monitor your wallets for ARK and bridgechains." />
+    <meta name="keywords" content="crypto,ark,bridgechains,wallets,blockchain" />
+
+    <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.ico') }}"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}favicon-16x16.png">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+
+    <meta property="og:image" content="{{ asset('images/cover.png') }}" />
+    <meta property="og:image:secure_url" content="{{ asset('images/cover.png') }}" />
+    <meta property="og:description" content="Arkwallets allows to easily monitor your wallets for ARK and bridgechains." />
+    <meta property="og:title" content="Arkwallets" />
+    <meta property="og:url" content="https://arkwallets.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="{{ app()->getLocale() }}" />
+    <meta property="og:site_name" content="Arkwallets" />
+
+    <meta property="twitter:card" content="{{ asset('images/cover.png') }}">
+    <meta property="twitter:content" content="https://arkwallets.com">
+    <meta property="twitter:title" content="Arkwallets">
+    <meta property="twitter:description" content="Arkwallets allows to easily monitor your wallets for ARK and bridgechains.">
+    <meta property="twitter:image" content="{{ asset('images/cover.png') }}">
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">

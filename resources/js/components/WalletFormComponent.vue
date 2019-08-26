@@ -87,7 +87,7 @@
                     return await this.makeToast("This wallet have no delegate.", "exclamation-triangle", "error");
                 }
 
-                const delegateData = {'address': this.walletAddress, 'url': this.arkvatarUrl};
+                const delegateData = {'address': this.walletAddress, 'arkvatarUrl': this.arkvatarUrl};
 
                 // Address isn't present, add it
                 this.$root.$data.wallets.push(delegateData);
@@ -95,7 +95,7 @@
 
                 localStorage.setItem("addresses", JSON.stringify(existing));
 
-                await this.makeToast("Wallet added !", "check-circle", "success")
+                await this.makeToast("Wallet added !", "check-circle", "success");
                 this.isProcessing = false;
             }
         }
