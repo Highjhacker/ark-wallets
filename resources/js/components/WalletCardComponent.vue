@@ -1,0 +1,221 @@
+<template>
+    <!-- Column -->
+    <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4" v-show="!deleted">
+        <!-- Article -->
+        <article class="overflow-hidden rounded-lg shadow-lg">
+            <a href="#" v-if="!toggleArkvatars">
+                <img alt="Placeholder" class="block h-auto w-full" :src="walletAddress.url">
+            </a>
+            <header class="flex items-center justify-between leading-tight p-2 md:p-4">
+                <h1 class="text-lg">
+                    <p class="no-underline text-black">
+                        {{ delegateUsername }}
+                    </p>
+                    <p class="flex items-center no-underline text-black text-sm">
+                        {{ dailyCalc | currencyDecimal }} Ѧ daily <br /> {{ [delegatePayoutInterval, 'hours'] | duration('humanize') | formatSharingSchedule }}
+                    </p>
+                </h1>
+                <p class="text-grey-darker text-sm" v-show="delegateIsGreen">
+                    <i class="fas fa-check-circle mx-auto has-tooltip" v-tooltip.bottom="'Forging'"></i>
+                </p>
+
+                <p class="text-grey-darker text-sm" v-show="!delegateIsGreen && delegateIsGreen != null">
+                    <i class="fas fa-times-circle mx-auto has-tooltip" v-tooltip.bottom="'Not Forging'"></i>
+                </p>
+
+                <p class="text-grey-darker text-sm" v-show="delegateIsGreen == null">
+                    <i class="fas fa-question-circle mx-auto has-tooltip" v-tooltip.bottom="'Unknown'"></i>
+                </p>
+            </header>
+
+            <footer class="flex items-center justify-between leading-none p-2 md:p-4">
+                <div class="inline-flex content-between">
+                    <button v-on:click="removeCard(walletAddress)" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded mx-1"
+                            v-tooltip.bottom="'Remove Wallet'">
+                        <i class="far fa-trash-alt"></i>
+                    </button>
+
+                    <a v-bind:href="`https://explorer.ark.io/wallets/${delegateAddress}`">
+                        <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded mx-1"
+                                v-tooltip.bottom="'See on Explorer'">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </a>
+
+                    <button class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 opacity-50 cursor-not-allowed"
+                            v-tooltip.bottom="'Payouts History'">
+                        <i class="fas fa-history"></i>
+                    </button>
+                </div>
+            </footer>
+        </article>
+        <!-- END Article -->
+    </div>
+    <!-- END Column -->
+</template>
+
+<script>
+    import * as Arkvatar from 'arkvatar-ts';
+
+    export default {
+        props:['wallet-address'],
+
+        data() {
+            return {
+                walletBalance: null,
+
+                delegatePublicKey: null,
+                delegateUsername: null,
+                delegateAddress: null,
+                delegateVotesTotal: null,
+                delegateRank: null,
+                delegateSharePercentage: null,
+                delegatePayoutInterval: null,
+                delegateIsForging: null,
+                delegateIsActive: null,
+                delegateIsGreen: null,
+                deleted: false,
+
+                toggleArkvatar: false
+            }
+        },
+
+        filters: {
+            currencyDecimal(value) {
+                return value.toFixed(2)
+            },
+
+            formatSharingSchedule(value) {
+                if (value === 'a day') { return 'daily'; }
+                if (value === '7 days') { return 'weekly'; }
+                else { return 'None'; }
+            }
+        },
+
+        mounted() {
+            this.getDataFromAddress();
+
+            setInterval(() => {
+                this.checkIfDelegateIsGreen();
+            }, 8000);
+        },
+
+        methods: {
+            async getArkvatar(address) {
+                const data = await Arkvatar.show(address);
+
+                if (data.status === 200) {
+                    if (data.data.url) {
+                        return data.data.url;
+                    }
+                }
+                if (data.response.status === 404) {
+                    return "https://arkvatars.s3.eu-west-3.amazonaws.com/arkvatars/public/jolanbeer%40gmail.com.png";
+                }
+            },
+
+            async removeCard(walletAddress) {
+                let existing = localStorage.getItem("addresses");
+                existing = existing ? JSON.parse(existing) : [];
+
+                let filtered = existing.filter(function(el) { return el.address !== walletAddress.address});
+
+                localStorage.setItem("addresses", JSON.stringify(filtered));
+
+                this.deleted = true;
+
+                await this.makeToast("Wallet removed", "check-circle", "success");
+            },
+
+            async getWalletData() {
+                const request = await axios.get(`https://node1.arknet.cloud/api/wallets/${this.walletAddress.address}`);
+                this.delegatePublicKey = request.data.data.vote;
+                this.walletBalance = request.data.data.balance;
+            },
+
+            async getDelegateData() {
+                const request = await axios.get(`https://node1.arknet.cloud/api/delegates/${this.delegatePublicKey}`);
+                this.delegateUsername = request.data.data.username;
+                this.delegateAddress = request.data.data.address;
+                this.delegateVotesTotal = request.data.data.votes;
+                this.delegateRank = request.data.data.rank;
+                return request;
+            },
+
+            async getDelegateShare() {
+                const userDelegateShareResponse = await axios.get(`${'https://cors-anywhere.herokuapp.com/'}https://api.arkdelegates.io/api/delegates/${this.delegateUsername}`);
+                this.delegateSharePercentage = userDelegateShareResponse.data.payout_percent;
+                this.delegatePayoutInterval = userDelegateShareResponse.data.payout_interval;
+            },
+
+            async isDelegateActive() {
+                return (this.delegateRank <= 51 ? this.delegateIsActive = true : this.delegateIsActive = false);
+            },
+
+            async checkIfDelegateIsGreen() {
+                return (this.delegateIsActive && this.delegateIsForging ? this.delegateIsGreen = true : this.delegateIsGreen = false);
+            },
+
+            async calculateForgingTime(delegateResponse) {
+                let lastBlockForged = delegateResponse.data.data.blocks.last.timestamp.unix;
+                let now = Vue.moment().unix();
+                let timeDifference = now - lastBlockForged;
+                timeDifference <= 600 ? this.delegateIsForging = true : this.delegateIsForging = false;
+            },
+
+            async getDataFromAddress() {
+                try {
+                    // Fetch the user input and process it on the /wallets/ endpoint of ARK API.
+                    await this.getWalletData();
+
+                    // Fetch information about user's delegate.
+                    const userDelegateResponse = await this.getDelegateData();
+
+                    this.walletAddress.url = await this.getArkvatar(this.delegateAddress);
+
+                    // Calculate the time difference since last block, if inferior to twelve minutes it's good.
+                    await this.calculateForgingTime(userDelegateResponse);
+
+                    // Check if the delegate is active or standby.
+                    await this.isDelegateActive();
+
+                    // Get the user delegate share.
+                    await this.getDelegateShare();
+                } catch (error) {
+                    console.log("Failed to fetch data.");
+                }
+            },
+        },
+        computed: {
+            dailyCalc: function (e) {
+                return this.walletBalance / this.delegateVotesTotal * 422 * this.delegateSharePercentage / 100;
+            },
+
+            weeklyCalc: function (e) {
+                return this.dailyCalc * 7;
+            },
+
+            monthlyCalc: function (e) {
+                return this.dailyCalc * 30;
+            },
+
+            toggleArkvatars: function(e) {
+                return this.$root.$data.toggleArkvatars;
+            }
+        }
+    }
+</script>
+
+<style>
+    .toasted.bubble.success {
+        background-color: #28a745;
+    }
+
+    .fas.fa-check-circle {
+        color: #28a745;
+    }
+
+    .fas.fa-times-circle {
+        color: #f1373a;
+    }
+</style>
