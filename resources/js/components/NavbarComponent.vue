@@ -1,18 +1,21 @@
 <template>
-    <div class="flex items-center justify-center">
-        <div class="ml-6">
-            <a href="/" class="text-lg font-semibold text-gray-100 no-underline">
-                Wallets Watcher
-            </a>
-        </div>
-        <div class="flex-1 text-right">
-            <toggle-button @change="onChangeEventHandler"
-                           v-model="toggleSwitch"
-                           :value="false"
-                           color="#82C7EB"
-                           :sync="true"
-                           :labels="true"
-                           v-tooltip.right="'Toggle Arkvatars'"/>
+    <div class="container mx-auto px-6 py-2 flex justify-between items-center">
+        <a class="font-bold text-2xl lg:text-4xl" href="#">
+            ArkWallets
+        </a>
+
+        <div class="lg:block">
+            <ul class="inline-flex">
+                <li>
+                    <toggle-button @change="onChangeEventHandler"
+                                   v-model="toggleSwitch"
+                                   :value="false"
+                                   color="#82C7EB"
+                                   :sync="true"
+                                   :labels="true"
+                                   v-tooltip.right="'Toggle Arkvatars'"/>
+                </li>
+            </ul>
         </div>
     </div>
 </template>

@@ -2115,6 +2115,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2708,7 +2711,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -2725,14 +2727,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   methods: {
-    getExplorerForType: function () {
-      var _getExplorerForType = _asyncToGenerator(
+    openFormModal: function () {
+      var _openFormModal = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(type) {
-        var explorers;
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
+              case 0:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      function openFormModal() {
+        return _openFormModal.apply(this, arguments);
+      }
+
+      return openFormModal;
+    }(),
+    getExplorerForType: function () {
+      var _getExplorerForType = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(type) {
+        var explorers;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
               case 0:
                 explorers = [{
                   'type': 'Ark',
@@ -2741,41 +2764,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   'type': 'Qredit',
                   'url': 'https://explorer.qredit.io'
                 }];
-                return _context.abrupt("return", explorers.find(function (match) {
-                  return match.type === type;
-                }));
-
-              case 2:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }));
-
-      function getExplorerForType(_x) {
-        return _getExplorerForType.apply(this, arguments);
-      }
-
-      return getExplorerForType;
-    }(),
-    getApiForType: function () {
-      var _getApiForType = _asyncToGenerator(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(type) {
-        var apis;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                apis = [{
-                  'type': 'Ark',
-                  'url': 'https://node1.arknet.cloud/api/'
-                }, {
-                  'type': 'Qredit',
-                  'url': 'https://api.qreditnode.com/api/'
-                }];
-                return _context2.abrupt("return", apis.find(function (match) {
+                return _context2.abrupt("return", explorers.find(function (match) {
                   return match.type === type;
                 }));
 
@@ -2787,6 +2776,40 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee2);
       }));
 
+      function getExplorerForType(_x) {
+        return _getExplorerForType.apply(this, arguments);
+      }
+
+      return getExplorerForType;
+    }(),
+    getApiForType: function () {
+      var _getApiForType = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(type) {
+        var apis;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                apis = [{
+                  'type': 'Ark',
+                  'url': 'https://node1.arknet.cloud/api/'
+                }, {
+                  'type': 'Qredit',
+                  'url': 'https://api.qreditnode.com/api/'
+                }];
+                return _context3.abrupt("return", apis.find(function (match) {
+                  return match.type === type;
+                }));
+
+              case 2:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
       function getApiForType(_x2) {
         return _getApiForType.apply(this, arguments);
       }
@@ -2796,40 +2819,40 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     queryApi: function () {
       var _queryApi = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(type, address) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(type, address) {
         var api;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                _context3.prev = 0;
-                _context3.next = 3;
+                _context4.prev = 0;
+                _context4.next = 3;
                 return this.getApiForType(type);
 
               case 3:
-                api = _context3.sent;
-                _context3.next = 6;
+                api = _context4.sent;
+                _context4.next = 6;
                 return axios.get("".concat(api.url, "wallets/").concat(address));
 
               case 6:
-                return _context3.abrupt("return", _context3.sent);
+                return _context4.abrupt("return", _context4.sent);
 
               case 9:
-                _context3.prev = 9;
-                _context3.t0 = _context3["catch"](0);
+                _context4.prev = 9;
+                _context4.t0 = _context4["catch"](0);
                 this.isProcessing = false;
-                _context3.next = 14;
+                _context4.next = 14;
                 return this.makeToast("Invalid type for the submitted Cryptocurrency.", "exclamation-triangle", "error");
 
               case 14:
-                return _context3.abrupt("return", _context3.sent);
+                return _context4.abrupt("return", _context4.sent);
 
               case 15:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this, [[0, 9]]);
+        }, _callee4, this, [[0, 9]]);
       }));
 
       function queryApi(_x3, _x4) {
@@ -2841,13 +2864,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     validateAddress: function () {
       var _validateAddress = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(address) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(address) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
-                _context4.prev = 0;
-                _context4.next = 3;
+                _context5.prev = 0;
+                _context5.next = 3;
                 return axios.get("https://retos.io/api/verify/".concat(address), {}, {
                   headers: {
                     'Content-Type': 'application/json'
@@ -2855,25 +2878,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
 
               case 3:
-                return _context4.abrupt("return", _context4.sent);
+                return _context5.abrupt("return", _context5.sent);
 
               case 6:
-                _context4.prev = 6;
-                _context4.t0 = _context4["catch"](0);
+                _context5.prev = 6;
+                _context5.t0 = _context5["catch"](0);
 
-                if (!(_context4.t0.response.status === 422)) {
-                  _context4.next = 10;
+                if (!(_context5.t0.response.status === 422)) {
+                  _context5.next = 10;
                   break;
                 }
 
-                return _context4.abrupt("return", true);
+                return _context5.abrupt("return", true);
 
               case 10:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee4, null, [[0, 6]]);
+        }, _callee5, null, [[0, 6]]);
       }));
 
       function validateAddress(_x5) {
@@ -2885,28 +2908,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     validateForm: function () {
       var _validateForm = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6() {
         var _this = this;
 
         var existing, explorer, api, userWalletResponse, delegateData;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
-                _context5.prev = 0;
+                _context6.prev = 0;
                 // We define the type of the Crypto to watch, Ark per default
                 this.type = this.selected;
 
                 if (!(this.walletAddress == null)) {
-                  _context5.next = 6;
+                  _context6.next = 6;
                   break;
                 }
 
-                _context5.next = 5;
+                _context6.next = 5;
                 return this.makeToast("Can't submit an empty address.", "exclamation-triangle", "error");
 
               case 5:
-                return _context5.abrupt("return", _context5.sent);
+                return _context6.abrupt("return", _context6.sent);
 
               case 6:
                 this.isProcessing = true; // Get the localStorage array and the existings keys in it
@@ -2917,62 +2940,62 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 if (!existing.find(function (wallet) {
                   return wallet.address === _this.walletAddress;
                 })) {
-                  _context5.next = 14;
+                  _context6.next = 14;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context5.next = 13;
+                _context6.next = 13;
                 return this.makeToast("Wallet already monitored.", "exclamation-triangle", "error");
 
               case 13:
-                return _context5.abrupt("return", _context5.sent);
+                return _context6.abrupt("return", _context6.sent);
 
               case 14:
-                _context5.next = 16;
+                _context6.next = 16;
                 return this.validateAddress(this.walletAddress);
 
               case 16:
-                if (_context5.sent) {
-                  _context5.next = 21;
+                if (_context6.sent) {
+                  _context6.next = 21;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context5.next = 20;
+                _context6.next = 20;
                 return this.makeToast("Invalid address.", "exclamation-triangle", "error");
 
               case 20:
-                return _context5.abrupt("return", _context5.sent);
+                return _context6.abrupt("return", _context6.sent);
 
               case 21:
-                _context5.next = 23;
+                _context6.next = 23;
                 return this.getExplorerForType(this.type);
 
               case 23:
-                explorer = _context5.sent;
-                _context5.next = 26;
+                explorer = _context6.sent;
+                _context6.next = 26;
                 return this.getApiForType(this.type);
 
               case 26:
-                api = _context5.sent;
-                _context5.next = 29;
+                api = _context6.sent;
+                _context6.next = 29;
                 return this.queryApi(this.type, this.walletAddress);
 
               case 29:
-                userWalletResponse = _context5.sent;
+                userWalletResponse = _context6.sent;
 
                 if (userWalletResponse.data.data.vote) {
-                  _context5.next = 35;
+                  _context6.next = 35;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context5.next = 34;
+                _context6.next = 34;
                 return this.makeToast("This wallet have no delegate.", "exclamation-triangle", "error");
 
               case 34:
-                return _context5.abrupt("return", _context5.sent);
+                return _context6.abrupt("return", _context6.sent);
 
               case 35:
                 delegateData = {
@@ -2986,22 +3009,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 existing.push(delegateData);
                 localStorage.setItem("addresses", JSON.stringify(existing));
                 this.isProcessing = false;
-                _context5.next = 42;
+                _context6.next = 42;
                 return this.makeToast("Wallet added !", "check-circle", "success");
 
               case 42:
-                return _context5.abrupt("return", _context5.sent);
+                return _context6.abrupt("return", _context6.sent);
 
               case 45:
-                _context5.prev = 45;
-                _context5.t0 = _context5["catch"](0);
+                _context6.prev = 45;
+                _context6.t0 = _context6["catch"](0);
 
               case 47:
               case "end":
-                return _context5.stop();
+                return _context6.stop();
             }
           }
-        }, _callee5, this, [[0, 45]]);
+        }, _callee6, this, [[0, 45]]);
       }));
 
       function validateForm() {
@@ -43723,55 +43746,58 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "flex items-center justify-center" }, [
-    _vm._m(0),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "flex-1 text-right" },
-      [
-        _c("toggle-button", {
-          directives: [
-            {
-              name: "tooltip",
-              rawName: "v-tooltip.right",
-              value: "Toggle Arkvatars",
-              expression: "'Toggle Arkvatars'",
-              modifiers: { right: true }
-            }
-          ],
-          attrs: { value: false, color: "#82C7EB", sync: true, labels: true },
-          on: { change: _vm.onChangeEventHandler },
-          model: {
-            value: _vm.toggleSwitch,
-            callback: function($$v) {
-              _vm.toggleSwitch = $$v
-            },
-            expression: "toggleSwitch"
-          }
-        })
-      ],
-      1
-    )
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "ml-6" }, [
+  return _c(
+    "div",
+    {
+      staticClass:
+        "container mx-auto px-6 py-2 flex justify-between items-center"
+    },
+    [
       _c(
         "a",
-        {
-          staticClass: "text-lg font-semibold text-gray-100 no-underline",
-          attrs: { href: "/" }
-        },
-        [_vm._v("\n            Wallets Watcher\n        ")]
-      )
-    ])
-  }
-]
+        { staticClass: "font-bold text-2xl lg:text-4xl", attrs: { href: "#" } },
+        [_vm._v("\n        ArkWallets\n    ")]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "lg:block" }, [
+        _c("ul", { staticClass: "inline-flex" }, [
+          _c(
+            "li",
+            [
+              _c("toggle-button", {
+                directives: [
+                  {
+                    name: "tooltip",
+                    rawName: "v-tooltip.right",
+                    value: "Toggle Arkvatars",
+                    expression: "'Toggle Arkvatars'",
+                    modifiers: { right: true }
+                  }
+                ],
+                attrs: {
+                  value: false,
+                  color: "#82C7EB",
+                  sync: true,
+                  labels: true
+                },
+                on: { change: _vm.onChangeEventHandler },
+                model: {
+                  value: _vm.toggleSwitch,
+                  callback: function($$v) {
+                    _vm.toggleSwitch = $$v
+                  },
+                  expression: "toggleSwitch"
+                }
+              })
+            ],
+            1
+          )
+        ])
+      ])
+    ]
+  )
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -44061,179 +44087,165 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "form",
-    {
-      staticClass: "w-full max-w-sm",
-      attrs: { method: "POST" },
-      on: {
-        submit: function($event) {
-          $event.preventDefault()
-          return _vm.validateForm($event)
+  return _c("div", [
+    _c(
+      "form",
+      {
+        staticClass: "w-full max-w-sm",
+        attrs: { method: "POST" },
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+            return _vm.validateForm($event)
+          }
         }
-      }
-    },
-    [
-      _c("div", { staticClass: "md:flex md:items-center mb-6" }, [
-        _vm._m(0),
-        _vm._v(" "),
-        _c("div", { staticClass: "md:w-2/3" }, [
-          _vm.errors.length
-            ? _c("div", [
-                _c("b", [_vm._v("Please correct the following error(s):")]),
-                _vm._v(" "),
-                _c(
-                  "ul",
-                  _vm._l(_vm.errors, function(error) {
-                    return _c("li", [_vm._v(_vm._s(error))])
-                  }),
-                  0
-                )
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.walletAddress,
-                expression: "walletAddress"
-              }
-            ],
-            staticClass:
-              "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500",
-            attrs: {
-              id: "walletAddress",
-              name: "walletAddress",
-              type: "text",
-              placeholder: "Valid Wallet Address"
-            },
-            domProps: { value: _vm.walletAddress },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.walletAddress = $event.target.value
-              }
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "relative m-4" }, [
-          _c(
-            "select",
-            {
+      },
+      [
+        _c("div", { staticClass: "md:flex md:items-center mb-6" }, [
+          _c("div", { staticClass: "md:w-2/3" }, [
+            _vm.errors.length
+              ? _c("div", [
+                  _c("b", [_vm._v("Please correct the following error(s):")]),
+                  _vm._v(" "),
+                  _c(
+                    "ul",
+                    _vm._l(_vm.errors, function(error) {
+                      return _c("li", [_vm._v(_vm._s(error))])
+                    }),
+                    0
+                  )
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _c("input", {
               directives: [
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.selected,
-                  expression: "selected"
+                  value: _vm.walletAddress,
+                  expression: "walletAddress"
                 }
               ],
               staticClass:
-                "block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500",
-              attrs: { id: "grid-state" },
+                "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500",
+              attrs: {
+                id: "walletAddress",
+                name: "walletAddress",
+                type: "text",
+                placeholder: "Valid Wallet Address"
+              },
+              domProps: { value: _vm.walletAddress },
               on: {
-                change: function($event) {
-                  var $$selectedVal = Array.prototype.filter
-                    .call($event.target.options, function(o) {
-                      return o.selected
-                    })
-                    .map(function(o) {
-                      var val = "_value" in o ? o._value : o.value
-                      return val
-                    })
-                  _vm.selected = $event.target.multiple
-                    ? $$selectedVal
-                    : $$selectedVal[0]
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.walletAddress = $event.target.value
                 }
               }
-            },
-            [
-              _c("option", [_vm._v("Ark")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Qredit")])
-            ]
-          ),
+            })
+          ]),
           _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass:
-                "pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-            },
-            [
-              _c(
-                "svg",
-                {
-                  staticClass: "fill-current h-4 w-4",
-                  attrs: {
-                    xmlns: "http://www.w3.org/2000/svg",
-                    viewBox: "0 0 20 20"
+          _c("div", { staticClass: "relative m-4" }, [
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.selected,
+                    expression: "selected"
                   }
-                },
-                [
-                  _c("path", {
+                ],
+                staticClass:
+                  "block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500",
+                attrs: { id: "grid-state" },
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.selected = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  }
+                }
+              },
+              [
+                _c("option", [_vm._v("Ark")]),
+                _vm._v(" "),
+                _c("option", [_vm._v("Qredit")])
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass:
+                  "pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+              },
+              [
+                _c(
+                  "svg",
+                  {
+                    staticClass: "fill-current h-4 w-4",
                     attrs: {
-                      d:
-                        "M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                      xmlns: "http://www.w3.org/2000/svg",
+                      viewBox: "0 0 20 20"
                     }
-                  })
-                ]
-              )
-            ]
-          )
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "md:flex md:items-center h-8" }, [
-        _c("div", { staticClass: "md:w-1/4" }),
+                  },
+                  [
+                    _c("path", {
+                      attrs: {
+                        d:
+                          "M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                      }
+                    })
+                  ]
+                )
+              ]
+            )
+          ])
+        ]),
         _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "md:w-2/3" },
-          [
+        _c("div", { staticClass: "md:flex md:items-center h-8" }, [
+          _c("div", { staticClass: "md:w-2/3" }, [
             !_vm.isProcessing
               ? _c(
                   "button",
                   {
                     staticClass:
-                      "shadow green-spinner focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded h-8",
+                      "bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16",
                     attrs: { type: "submit" }
                   },
                   [_vm._v("\n                Add Wallet\n            ")]
                 )
               : _vm._e(),
             _vm._v(" "),
-            _vm.isProcessing ? _c("Stretch", {}) : _vm._e()
-          ],
-          1
-        )
-      ])
-    ]
-  )
+            _vm.isProcessing
+              ? _c(
+                  "button",
+                  {
+                    staticClass:
+                      "bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16"
+                  },
+                  [_vm.isProcessing ? _c("Stretch", {}) : _vm._e()],
+                  1
+                )
+              : _vm._e()
+          ])
+        ])
+      ]
+    )
+  ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "md:w-1/3" }, [
-      _c(
-        "label",
-        {
-          staticClass:
-            "block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4",
-          attrs: { for: "walletAddress" }
-        },
-        [_vm._v("\n                Wallet Address\n            ")]
-      )
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

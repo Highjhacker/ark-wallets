@@ -1,11 +1,7 @@
 <template>
+    <div>
     <form @submit.prevent="validateForm" method="POST" class="w-full max-w-sm">
         <div class="md:flex md:items-center mb-6">
-            <div class="md:w-1/3">
-                <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="walletAddress">
-                    Wallet Address
-                </label>
-            </div>
             <div class="md:w-2/3">
                 <div v-if="errors.length">
                     <b>Please correct the following error(s):</b>
@@ -28,15 +24,18 @@
         </div>
 
         <div class="md:flex md:items-center h-8">
-            <div class="md:w-1/4"></div>
             <div class="md:w-2/3">
-                <button v-if="!isProcessing" class="shadow green-spinner focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded h-8" type="submit">
+                <button v-if="!isProcessing" class="bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16" type="submit">
                     Add Wallet
                 </button>
-                <Stretch class="" v-if="isProcessing"></Stretch>
+
+                <button v-if="isProcessing" class="bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16">
+                    <Stretch class="" v-if="isProcessing"></Stretch>
+                </button>
             </div>
         </div>
     </form>
+    </div>
 </template>
 
 <script>
@@ -58,13 +57,17 @@
         },
 
         methods: {
-            async getExplorerForType(type) {
-                  const explorers = [
-                      {'type': 'Ark', 'url': 'https://explorer.ark.io/'},
-                      {'type': 'Qredit', 'url': 'https://explorer.qredit.io'}
-                  ];
+            async openFormModal() {
 
-                  return explorers.find(match => match.type === type)
+            },
+
+            async getExplorerForType(type) {
+                const explorers = [
+                    {'type': 'Ark', 'url': 'https://explorer.ark.io/'},
+                    {'type': 'Qredit', 'url': 'https://explorer.qredit.io'}
+                ];
+
+                return explorers.find(match => match.type === type)
             },
             async getApiForType(type) {
                 const apis = [
