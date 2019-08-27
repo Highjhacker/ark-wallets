@@ -12,7 +12,7 @@
                         {{ delegateUsername }}
                     </p>
                     <p class="flex items-center no-underline text-black text-sm">
-                        {{ dailyCalc | currencyDecimal }} Ѧ daily <br /> {{ [delegatePayoutInterval, 'hours'] | duration('humanize') | formatSharingSchedule }}
+                        {{ dailyCalc | currencyDecimal }} {{ displayCurrencySign }} daily <br /> {{ [delegatePayoutInterval, 'hours'] | duration('humanize') | formatSharingSchedule }}
                     </p>
                 </h1>
                 <p class="text-grey-darker text-sm" v-show="delegateIsGreen">
@@ -35,7 +35,7 @@
                         <i class="far fa-trash-alt"></i>
                     </button>
 
-                    <a v-bind:href="`https://explorer.ark.io/wallets/${delegateAddress}`">
+                    <a v-bind:href="`${walletAddress.explorerUrl}/wallets/${delegateAddress}`">
                         <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded mx-1"
                                 v-tooltip.bottom="'See on Explorer'">
                             <i class="fas fa-link"></i>
@@ -76,7 +76,7 @@
                 delegateIsGreen: null,
                 deleted: false,
 
-                toggleArkvatar: false
+                toggleArkvatar: false,
             }
         },
 
@@ -86,10 +86,15 @@
             },
 
             formatSharingSchedule(value) {
+                if (value === '6 hours') { return 'every 6 hours'; }
+                if (value === '12 hours') { return 'every 12 hours'; }
                 if (value === 'a day') { return 'daily'; }
+                if (value === '2 days') { return '2 days'; }
+                if (value === '3 days') { return '3 days'; }
+                if (value === '5 days') { return '5 days'; }
                 if (value === '7 days') { return 'weekly'; }
-                else { return 'None'; }
-            }
+                else { return 'unknown'; }
+            },
         },
 
         mounted() {
@@ -128,24 +133,33 @@
             },
 
             async getWalletData() {
-                const request = await axios.get(`https://node1.arknet.cloud/api/wallets/${this.walletAddress.address}`);
+                const request = await axios.get(`${this.walletAddress.apiUrl}wallets/${this.walletAddress.address}`);
+
                 this.delegatePublicKey = request.data.data.vote;
                 this.walletBalance = request.data.data.balance;
             },
 
             async getDelegateData() {
-                const request = await axios.get(`https://node1.arknet.cloud/api/delegates/${this.delegatePublicKey}`);
+                const request = await axios.get(`${this.walletAddress.apiUrl}delegates/${this.delegatePublicKey}`);
+
                 this.delegateUsername = request.data.data.username;
                 this.delegateAddress = request.data.data.address;
                 this.delegateVotesTotal = request.data.data.votes;
                 this.delegateRank = request.data.data.rank;
+
                 return request;
             },
 
             async getDelegateShare() {
-                const userDelegateShareResponse = await axios.get(`${'https://cors-anywhere.herokuapp.com/'}https://api.arkdelegates.io/api/delegates/${this.delegateUsername}`);
-                this.delegateSharePercentage = userDelegateShareResponse.data.payout_percent;
-                this.delegatePayoutInterval = userDelegateShareResponse.data.payout_interval;
+                if (this.walletAddress.type === 'Ark') {
+                    const userDelegateShareResponse = await axios.get(`${'https://cors-anywhere.herokuapp.com/'}https://api.arkdelegates.io/api/delegates/${this.delegateUsername}`);
+
+                    this.delegateSharePercentage = userDelegateShareResponse.data.payout_percent;
+                    this.delegatePayoutInterval = userDelegateShareResponse.data.payout_interval;
+                } else {
+                    this.delegateSharePercentage = 'Unknown';
+                    this.delegatePayoutInterval = 'Unknown';
+                }
             },
 
             async isDelegateActive() {
@@ -187,20 +201,34 @@
             },
         },
         computed: {
-            dailyCalc: function (e) {
+            dailyCalc: function () {
+                if (isNaN(this.delegateSharePercentage)) {
+                    return 0;
+                }
+
                 return this.walletBalance / this.delegateVotesTotal * 422 * this.delegateSharePercentage / 100;
             },
 
-            weeklyCalc: function (e) {
+            weeklyCalc: function () {
                 return this.dailyCalc * 7;
             },
 
-            monthlyCalc: function (e) {
+            monthlyCalc: function () {
                 return this.dailyCalc * 30;
             },
 
-            toggleArkvatars: function(e) {
+            toggleArkvatars: function() {
                 return this.$root.$data.toggleArkvatars;
+            },
+
+            displayCurrencySign: function() {
+                if (this.walletAddress.type === 'Ark') {
+                    return 'Ѧ';
+                }
+
+                if (this.walletAddress.type === 'Qredit') {
+                    return 'XQR';
+                }
             }
         }
     }

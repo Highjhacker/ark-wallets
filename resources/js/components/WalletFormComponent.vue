@@ -15,10 +15,20 @@
                 </div>
                 <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="walletAddress" v-model="walletAddress" name="walletAddress" type="text" placeholder="Valid Wallet Address">
             </div>
+
+            <div class="relative m-4">
+                <select v-model="selected" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="grid-state">
+                    <option>Ark</option>
+                    <option>Qredit</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
+            </div>
         </div>
 
         <div class="md:flex md:items-center h-8">
-            <div class="md:w-1/3"></div>
+            <div class="md:w-1/4"></div>
             <div class="md:w-2/3">
                 <button v-if="!isProcessing" class="shadow green-spinner focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded h-8" type="submit">
                     Add Wallet
@@ -39,12 +49,43 @@
                 errors: [],
                 walletAddress: null,
                 arkvatarUrl: null,
+                type: null,
 
                 isProcessing: false,
+
+                selected: 'Ark'
             }
         },
 
         methods: {
+            async getExplorerForType(type) {
+                  const explorers = [
+                      {'type': 'Ark', 'url': 'https://explorer.ark.io/'},
+                      {'type': 'Qredit', 'url': 'https://explorer.qredit.io'}
+                  ];
+
+                  return explorers.find(match => match.type === type)
+            },
+            async getApiForType(type) {
+                const apis = [
+                    {'type': 'Ark', 'url': 'https://node1.arknet.cloud/api/'},
+                    {'type': 'Qredit', 'url': 'https://api.qreditnode.com/api/'}
+                ];
+
+                return apis.find(match => match.type === type)
+            },
+
+            async queryApi(type, address) {
+                try {
+                    const api = await this.getApiForType(type);
+
+                    return await axios.get(`${api.url}wallets/${address}`);
+                } catch (error) {
+                    this.isProcessing = false;
+                    return await this.makeToast("Invalid type for the submitted Cryptocurrency.", "exclamation-triangle", "error");
+                }
+            },
+
             async validateAddress(address) {
                 try {
                     return await axios.get(`https://retos.io/api/verify/${address}`, {}, {headers: {'Content-Type': 'application/json'}});
@@ -58,45 +99,54 @@
             },
 
             async validateForm() {
-                if (this.walletAddress == null)
-                {
-                    return await this.makeToast("Can't submit an empty address.", "exclamation-triangle", "error");
-                }
+                try {
+                    // We define the type of the Crypto to watch, Ark per default
+                    this.type = this.selected;
 
-                this.isProcessing = true;
+                    if (this.walletAddress == null)
+                    {
+                        return await this.makeToast("Can't submit an empty address.", "exclamation-triangle", "error");
+                    }
 
-                // Get the localStorage array and the existings keys in it
-                let existing = localStorage.getItem("addresses");
-                existing = existing ? JSON.parse(existing) : [];
+                    this.isProcessing = true;
 
-                if(existing.find(wallet => wallet.address === this.walletAddress)) {
+                    // Get the localStorage array and the existings keys in it
+                    let existing = localStorage.getItem("addresses");
+                    existing = existing ? JSON.parse(existing) : [];
+
+                    if(existing.find(wallet => wallet.address === this.walletAddress)) {
+                        this.isProcessing = false;
+                        return await this.makeToast("Wallet already monitored.", "exclamation-triangle", "error");
+                    }
+
+                    if (!await this.validateAddress(this.walletAddress))
+                    {
+                        this.isProcessing = false;
+                        return await this.makeToast("Invalid address.", "exclamation-triangle", "error");
+                    }
+
+                    const explorer = await this.getExplorerForType(this.type);
+                    const api = await this.getApiForType(this.type);
+
+                    const userWalletResponse = await this.queryApi(this.type, this.walletAddress);
+
+                    if (!userWalletResponse.data.data.vote) {
+                        this.isProcessing = false;
+                        return await this.makeToast("This wallet have no delegate.", "exclamation-triangle", "error");
+                    }
+
+                    const delegateData = {'address': this.walletAddress, 'arkvatarUrl': this.arkvatarUrl, 'type': this.type, 'apiUrl': api.url, 'explorerUrl': explorer.url};
+
+                    this.$root.$data.wallets.push(delegateData);
+                    existing.push(delegateData);
+
+                    localStorage.setItem("addresses", JSON.stringify(existing));
+
                     this.isProcessing = false;
-                    return await this.makeToast("Wallet already monitored.", "exclamation-triangle", "error");
+
+                    return await this.makeToast("Wallet added !", "check-circle", "success");
+                } catch (error) {
                 }
-
-                if (!await this.validateAddress(this.walletAddress))
-                {
-                    this.isProcessing = false;
-                    return await this.makeToast("Invalid address.", "exclamation-triangle", "error");
-                }
-
-                const userWalletResponse = await axios.get(`https://node1.arknet.cloud/api/wallets/${this.walletAddress}`);
-
-                if (!userWalletResponse.data.data.vote) {
-                    this.isProcessing = false;
-                    return await this.makeToast("This wallet have no delegate.", "exclamation-triangle", "error");
-                }
-
-                const delegateData = {'address': this.walletAddress, 'arkvatarUrl': this.arkvatarUrl};
-
-                // Address isn't present, add it
-                this.$root.$data.wallets.push(delegateData);
-                existing.push(delegateData);
-
-                localStorage.setItem("addresses", JSON.stringify(existing));
-
-                await this.makeToast("Wallet added !", "check-circle", "success");
-                this.isProcessing = false;
             }
         }
     }

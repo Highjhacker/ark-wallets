@@ -2255,14 +2255,34 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return value.toFixed(2);
     },
     formatSharingSchedule: function formatSharingSchedule(value) {
+      if (value === '6 hours') {
+        return 'every 6 hours';
+      }
+
+      if (value === '12 hours') {
+        return 'every 12 hours';
+      }
+
       if (value === 'a day') {
         return 'daily';
+      }
+
+      if (value === '2 days') {
+        return '2 days';
+      }
+
+      if (value === '3 days') {
+        return '3 days';
+      }
+
+      if (value === '5 days') {
+        return '5 days';
       }
 
       if (value === '7 days') {
         return 'weekly';
       } else {
-        return 'None';
+        return 'unknown';
       }
     }
   },
@@ -2367,7 +2387,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context3.prev = _context3.next) {
               case 0:
                 _context3.next = 2;
-                return axios.get("https://node1.arknet.cloud/api/wallets/".concat(this.walletAddress.address));
+                return axios.get("".concat(this.walletAddress.apiUrl, "wallets/").concat(this.walletAddress.address));
 
               case 2:
                 request = _context3.sent;
@@ -2398,7 +2418,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context4.prev = _context4.next) {
               case 0:
                 _context4.next = 2;
-                return axios.get("https://node1.arknet.cloud/api/delegates/".concat(this.delegatePublicKey));
+                return axios.get("".concat(this.walletAddress.apiUrl, "delegates/").concat(this.delegatePublicKey));
 
               case 2:
                 request = _context4.sent;
@@ -2431,15 +2451,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                _context5.next = 2;
+                if (!(this.walletAddress.type === 'Ark')) {
+                  _context5.next = 8;
+                  break;
+                }
+
+                _context5.next = 3;
                 return axios.get('https://cors-anywhere.herokuapp.com/'.concat("https://api.arkdelegates.io/api/delegates/", this.delegateUsername));
 
-              case 2:
+              case 3:
                 userDelegateShareResponse = _context5.sent;
                 this.delegateSharePercentage = userDelegateShareResponse.data.payout_percent;
                 this.delegatePayoutInterval = userDelegateShareResponse.data.payout_interval;
+                _context5.next = 10;
+                break;
 
-              case 5:
+              case 8:
+                this.delegateSharePercentage = 'Unknown';
+                this.delegatePayoutInterval = 'Unknown';
+
+              case 10:
               case "end":
                 return _context5.stop();
             }
@@ -2589,17 +2620,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }()
   },
   computed: {
-    dailyCalc: function dailyCalc(e) {
+    dailyCalc: function dailyCalc() {
+      if (isNaN(this.delegateSharePercentage)) {
+        return 0;
+      }
+
       return this.walletBalance / this.delegateVotesTotal * 422 * this.delegateSharePercentage / 100;
     },
-    weeklyCalc: function weeklyCalc(e) {
+    weeklyCalc: function weeklyCalc() {
       return this.dailyCalc * 7;
     },
-    monthlyCalc: function monthlyCalc(e) {
+    monthlyCalc: function monthlyCalc() {
       return this.dailyCalc * 30;
     },
-    toggleArkvatars: function toggleArkvatars(e) {
+    toggleArkvatars: function toggleArkvatars() {
       return this.$root.$data.toggleArkvatars;
+    },
+    displayCurrencySign: function displayCurrencySign() {
+      if (this.walletAddress.type === 'Ark') {
+        return 'Ѧ';
+      }
+
+      if (this.walletAddress.type === 'Qredit') {
+        return 'XQR';
+      }
     }
   }
 });
@@ -2655,6 +2699,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -2665,20 +2719,135 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       errors: [],
       walletAddress: null,
       arkvatarUrl: null,
-      isProcessing: false
+      type: null,
+      isProcessing: false,
+      selected: 'Ark'
     };
   },
   methods: {
-    validateAddress: function () {
-      var _validateAddress = _asyncToGenerator(
+    getExplorerForType: function () {
+      var _getExplorerForType = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(address) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(type) {
+        var explorers;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.prev = 0;
-                _context.next = 3;
+                explorers = [{
+                  'type': 'Ark',
+                  'url': 'https://explorer.ark.io/'
+                }, {
+                  'type': 'Qredit',
+                  'url': 'https://explorer.qredit.io'
+                }];
+                return _context.abrupt("return", explorers.find(function (match) {
+                  return match.type === type;
+                }));
+
+              case 2:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      function getExplorerForType(_x) {
+        return _getExplorerForType.apply(this, arguments);
+      }
+
+      return getExplorerForType;
+    }(),
+    getApiForType: function () {
+      var _getApiForType = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(type) {
+        var apis;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                apis = [{
+                  'type': 'Ark',
+                  'url': 'https://node1.arknet.cloud/api/'
+                }, {
+                  'type': 'Qredit',
+                  'url': 'https://api.qreditnode.com/api/'
+                }];
+                return _context2.abrupt("return", apis.find(function (match) {
+                  return match.type === type;
+                }));
+
+              case 2:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      function getApiForType(_x2) {
+        return _getApiForType.apply(this, arguments);
+      }
+
+      return getApiForType;
+    }(),
+    queryApi: function () {
+      var _queryApi = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(type, address) {
+        var api;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.prev = 0;
+                _context3.next = 3;
+                return this.getApiForType(type);
+
+              case 3:
+                api = _context3.sent;
+                _context3.next = 6;
+                return axios.get("".concat(api.url, "wallets/").concat(address));
+
+              case 6:
+                return _context3.abrupt("return", _context3.sent);
+
+              case 9:
+                _context3.prev = 9;
+                _context3.t0 = _context3["catch"](0);
+                this.isProcessing = false;
+                _context3.next = 14;
+                return this.makeToast("Invalid type for the submitted Cryptocurrency.", "exclamation-triangle", "error");
+
+              case 14:
+                return _context3.abrupt("return", _context3.sent);
+
+              case 15:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this, [[0, 9]]);
+      }));
+
+      function queryApi(_x3, _x4) {
+        return _queryApi.apply(this, arguments);
+      }
+
+      return queryApi;
+    }(),
+    validateAddress: function () {
+      var _validateAddress = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(address) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.prev = 0;
+                _context4.next = 3;
                 return axios.get("https://retos.io/api/verify/".concat(address), {}, {
                   headers: {
                     'Content-Type': 'application/json'
@@ -2686,28 +2855,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
 
               case 3:
-                return _context.abrupt("return", _context.sent);
+                return _context4.abrupt("return", _context4.sent);
 
               case 6:
-                _context.prev = 6;
-                _context.t0 = _context["catch"](0);
+                _context4.prev = 6;
+                _context4.t0 = _context4["catch"](0);
 
-                if (!(_context.t0.response.status === 422)) {
-                  _context.next = 10;
+                if (!(_context4.t0.response.status === 422)) {
+                  _context4.next = 10;
                   break;
                 }
 
-                return _context.abrupt("return", true);
+                return _context4.abrupt("return", true);
 
               case 10:
               case "end":
-                return _context.stop();
+                return _context4.stop();
             }
           }
-        }, _callee, null, [[0, 6]]);
+        }, _callee4, null, [[0, 6]]);
       }));
 
-      function validateAddress(_x) {
+      function validateAddress(_x5) {
         return _validateAddress.apply(this, arguments);
       }
 
@@ -2716,26 +2885,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     validateForm: function () {
       var _validateForm = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
         var _this = this;
 
-        var existing, userWalletResponse, delegateData;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+        var existing, explorer, api, userWalletResponse, delegateData;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
+                _context5.prev = 0;
+                // We define the type of the Crypto to watch, Ark per default
+                this.type = this.selected;
+
                 if (!(this.walletAddress == null)) {
-                  _context2.next = 4;
+                  _context5.next = 6;
                   break;
                 }
 
-                _context2.next = 3;
+                _context5.next = 5;
                 return this.makeToast("Can't submit an empty address.", "exclamation-triangle", "error");
 
-              case 3:
-                return _context2.abrupt("return", _context2.sent);
+              case 5:
+                return _context5.abrupt("return", _context5.sent);
 
-              case 4:
+              case 6:
                 this.isProcessing = true; // Get the localStorage array and the existings keys in it
 
                 existing = localStorage.getItem("addresses");
@@ -2744,74 +2917,91 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 if (!existing.find(function (wallet) {
                   return wallet.address === _this.walletAddress;
                 })) {
-                  _context2.next = 12;
+                  _context5.next = 14;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context2.next = 11;
+                _context5.next = 13;
                 return this.makeToast("Wallet already monitored.", "exclamation-triangle", "error");
 
-              case 11:
-                return _context2.abrupt("return", _context2.sent);
-
-              case 12:
-                _context2.next = 14;
-                return this.validateAddress(this.walletAddress);
+              case 13:
+                return _context5.abrupt("return", _context5.sent);
 
               case 14:
-                if (_context2.sent) {
-                  _context2.next = 19;
+                _context5.next = 16;
+                return this.validateAddress(this.walletAddress);
+
+              case 16:
+                if (_context5.sent) {
+                  _context5.next = 21;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context2.next = 18;
+                _context5.next = 20;
                 return this.makeToast("Invalid address.", "exclamation-triangle", "error");
 
-              case 18:
-                return _context2.abrupt("return", _context2.sent);
-
-              case 19:
-                _context2.next = 21;
-                return axios.get("https://node1.arknet.cloud/api/wallets/".concat(this.walletAddress));
+              case 20:
+                return _context5.abrupt("return", _context5.sent);
 
               case 21:
-                userWalletResponse = _context2.sent;
+                _context5.next = 23;
+                return this.getExplorerForType(this.type);
+
+              case 23:
+                explorer = _context5.sent;
+                _context5.next = 26;
+                return this.getApiForType(this.type);
+
+              case 26:
+                api = _context5.sent;
+                _context5.next = 29;
+                return this.queryApi(this.type, this.walletAddress);
+
+              case 29:
+                userWalletResponse = _context5.sent;
 
                 if (userWalletResponse.data.data.vote) {
-                  _context2.next = 27;
+                  _context5.next = 35;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context2.next = 26;
+                _context5.next = 34;
                 return this.makeToast("This wallet have no delegate.", "exclamation-triangle", "error");
 
-              case 26:
-                return _context2.abrupt("return", _context2.sent);
+              case 34:
+                return _context5.abrupt("return", _context5.sent);
 
-              case 27:
+              case 35:
                 delegateData = {
                   'address': this.walletAddress,
-                  'arkvatarUrl': this.arkvatarUrl
-                }; // Address isn't present, add it
-
+                  'arkvatarUrl': this.arkvatarUrl,
+                  'type': this.type,
+                  'apiUrl': api.url,
+                  'explorerUrl': explorer.url
+                };
                 this.$root.$data.wallets.push(delegateData);
                 existing.push(delegateData);
                 localStorage.setItem("addresses", JSON.stringify(existing));
-                _context2.next = 33;
+                this.isProcessing = false;
+                _context5.next = 42;
                 return this.makeToast("Wallet added !", "check-circle", "success");
 
-              case 33:
-                this.isProcessing = false;
+              case 42:
+                return _context5.abrupt("return", _context5.sent);
 
-              case 34:
+              case 45:
+                _context5.prev = 45;
+                _context5.t0 = _context5["catch"](0);
+
+              case 47:
               case "end":
-                return _context2.stop();
+                return _context5.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee5, this, [[0, 45]]);
       }));
 
       function validateForm() {
@@ -43653,7 +43843,9 @@ var render = function() {
                   _vm._v(
                     "\n                    " +
                       _vm._s(_vm._f("currencyDecimal")(_vm.dailyCalc)) +
-                      " Ѧ daily "
+                      " " +
+                      _vm._s(_vm.displayCurrencySign) +
+                      " daily "
                   ),
                   _c("br"),
                   _vm._v(
@@ -43797,7 +43989,9 @@ var render = function() {
                 {
                   attrs: {
                     href:
-                      "https://explorer.ark.io/wallets/" + _vm.delegateAddress
+                      _vm.walletAddress.explorerUrl +
+                      "/wallets/" +
+                      _vm.delegateAddress
                   }
                 },
                 [
@@ -43925,11 +44119,78 @@ var render = function() {
               }
             }
           })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "relative m-4" }, [
+          _c(
+            "select",
+            {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.selected,
+                  expression: "selected"
+                }
+              ],
+              staticClass:
+                "block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500",
+              attrs: { id: "grid-state" },
+              on: {
+                change: function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.selected = $event.target.multiple
+                    ? $$selectedVal
+                    : $$selectedVal[0]
+                }
+              }
+            },
+            [
+              _c("option", [_vm._v("Ark")]),
+              _vm._v(" "),
+              _c("option", [_vm._v("Qredit")])
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass:
+                "pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            },
+            [
+              _c(
+                "svg",
+                {
+                  staticClass: "fill-current h-4 w-4",
+                  attrs: {
+                    xmlns: "http://www.w3.org/2000/svg",
+                    viewBox: "0 0 20 20"
+                  }
+                },
+                [
+                  _c("path", {
+                    attrs: {
+                      d:
+                        "M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                    }
+                  })
+                ]
+              )
+            ]
+          )
         ])
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "md:flex md:items-center h-8" }, [
-        _c("div", { staticClass: "md:w-1/3" }),
+        _c("div", { staticClass: "md:w-1/4" }),
         _vm._v(" "),
         _c(
           "div",
