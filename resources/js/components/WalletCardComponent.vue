@@ -1,10 +1,10 @@
 <template>
     <!-- Column -->
-    <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4" v-show="!deleted">
+    <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4 py-4" v-show="!deleted">
         <!-- Article -->
         <article class="overflow-hidden rounded-lg shadow-lg">
-            <a href="#" v-if="!toggleArkvatars">
-                <img :alt="walletAddress.address" class="block h-auto w-full" :src="walletAddress.url" v-tooltip.bottom="walletAddress.address">
+            <a v-if="!toggleArkvatars">
+                <img :alt="walletAddress.address" class="block h-auto w-full" :src="walletAddress.url" v-tooltip.top="walletAddress.address">
             </a>
             <header class="flex items-center justify-between leading-tight p-2 md:p-4">
                 <h1 class="text-lg">

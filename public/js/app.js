@@ -43864,20 +43864,20 @@ var render = function() {
           expression: "!deleted"
         }
       ],
-      staticClass: "my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4"
+      staticClass: "my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4 py-4"
     },
     [
       _c("article", { staticClass: "overflow-hidden rounded-lg shadow-lg" }, [
         !_vm.toggleArkvatars
-          ? _c("a", { attrs: { href: "#" } }, [
+          ? _c("a", [
               _c("img", {
                 directives: [
                   {
                     name: "tooltip",
-                    rawName: "v-tooltip.bottom",
+                    rawName: "v-tooltip.top",
                     value: _vm.walletAddress.address,
                     expression: "walletAddress.address",
-                    modifiers: { bottom: true }
+                    modifiers: { top: true }
                   }
                 ],
                 staticClass: "block h-auto w-full",
@@ -65162,6 +65162,7 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 Vue.config.productionTip = false;
+Vue.config.devtools = false;
 Vue.mixin(_mixins__WEBPACK_IMPORTED_MODULE_2__["default"]);
 Vue.use(__webpack_require__(/*! vue-moment */ "./node_modules/vue-moment/dist/vue-moment.js"));
 Vue.use(vue_toasted__WEBPACK_IMPORTED_MODULE_0___default.a, {
