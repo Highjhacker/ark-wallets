@@ -7,6 +7,7 @@
                 :actions="fabActions"
                 @exportWallets="exportWallets"
                 @importWallets="importWallets"
+                @importLedger="importLedger"
         ></fab>
     </div>
 </template>
@@ -38,6 +39,12 @@
                         icon: 'arrow_drop_down',
                         tooltip: 'Export Wallets',
                         color: '#FF4136'
+                    },
+                    {
+                        name: 'importLedger',
+                        icon: 'account_balance',
+                        tooltip: 'Import from Ledger',
+                        color: '#FF4136'
                     }
                 ]
             }
@@ -56,6 +63,10 @@
 
                 await this.makeToast("Successfully exported to clipboard !", "check-circle", "success");
             },
+
+            async importLedger() {
+                console.log("Not implemented yet.");
+            }
         }
     }
 </script>

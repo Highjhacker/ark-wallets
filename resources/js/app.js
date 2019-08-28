@@ -10,6 +10,9 @@ import ToggleButton from 'vue-js-toggle-button';
 require('./bootstrap');
 
 window.Vue = require('vue');
+
+Vue.config.productionTip = false;
+
 Vue.mixin(toast);
 Vue.use(require('vue-moment'));
 Vue.use(Toasted, {iconPack: 'fontawesome'});

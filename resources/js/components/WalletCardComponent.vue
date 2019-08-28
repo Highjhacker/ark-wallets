@@ -35,7 +35,7 @@
                         <i class="far fa-trash-alt"></i>
                     </button>
 
-                    <a v-bind:href="`${walletAddress.explorerUrl}/wallets/${delegateAddress}`">
+                    <a v-bind:href="`${walletAddress.explorerUrl}wallets/${walletAddress.address}`">
                         <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded mx-1"
                                 v-tooltip.bottom="'See on Explorer'">
                             <i class="fas fa-link"></i>

@@ -1968,7 +1968,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     showing: {
@@ -3070,6 +3069,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 
 /*
   Need to refactor and use Stores (VueX) instead
@@ -3093,6 +3093,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         name: 'exportWallets',
         icon: 'arrow_drop_down',
         tooltip: 'Export Wallets',
+        color: '#FF4136'
+      }, {
+        name: 'importLedger',
+        icon: 'account_balance',
+        tooltip: 'Import from Ledger',
         color: '#FF4136'
       }]
     };
@@ -3150,6 +3155,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return exportWallets;
+    }(),
+    importLedger: function () {
+      var _importLedger = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                console.log("Not implemented yet.");
+
+              case 1:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
+      function importLedger() {
+        return _importLedger.apply(this, arguments);
+      }
+
+      return importLedger;
     }()
   }
 });
@@ -43705,18 +43734,23 @@ var render = function() {
                         ]
                       )
                     ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass:
+                        "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline",
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.close($event)
+                        }
+                      }
+                    },
+                    [_vm._v("\n                    Close\n                ")]
                   )
-                ]),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass:
-                      "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline",
-                    on: { click: _vm.close }
-                  },
-                  [_vm._v("\n                Close\n            ")]
-                )
+                ])
               ]
             )
           ]
@@ -43837,8 +43871,20 @@ var render = function() {
         !_vm.toggleArkvatars
           ? _c("a", { attrs: { href: "#" } }, [
               _c("img", {
+                directives: [
+                  {
+                    name: "tooltip",
+                    rawName: "v-tooltip.bottom",
+                    value: _vm.walletAddress.address,
+                    expression: "walletAddress.address",
+                    modifiers: { bottom: true }
+                  }
+                ],
                 staticClass: "block h-auto w-full",
-                attrs: { alt: "Placeholder", src: _vm.walletAddress.url }
+                attrs: {
+                  alt: _vm.walletAddress.address,
+                  src: _vm.walletAddress.url
+                }
               })
             ])
           : _vm._e(),
@@ -44016,8 +44062,8 @@ var render = function() {
                   attrs: {
                     href:
                       _vm.walletAddress.explorerUrl +
-                      "/wallets/" +
-                      _vm.delegateAddress
+                      "wallets/" +
+                      _vm.walletAddress.address
                   }
                 },
                 [
@@ -44286,7 +44332,8 @@ var render = function() {
         },
         on: {
           exportWallets: _vm.exportWallets,
-          importWallets: _vm.importWallets
+          importWallets: _vm.importWallets,
+          importLedger: _vm.importLedger
         }
       })
     ],
@@ -65114,6 +65161,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
+Vue.config.productionTip = false;
 Vue.mixin(_mixins__WEBPACK_IMPORTED_MODULE_2__["default"]);
 Vue.use(__webpack_require__(/*! vue-moment */ "./node_modules/vue-moment/dist/vue-moment.js"));
 Vue.use(vue_toasted__WEBPACK_IMPORTED_MODULE_0___default.a, {

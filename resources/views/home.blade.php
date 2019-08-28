@@ -81,7 +81,7 @@
     </section>
 
     <!--Footer-->
-    <footer class="bg-gray-100">
+    <footer class="bg-grey-200">
         <div class="container mx-auto px-6 pt-10 pb-6">
             <div class="flex flex-wrap">
                 <div class="w-full md:w-1/4 text-center md:text-left ">
