@@ -102,7 +102,7 @@
 
             setInterval(() => {
                 this.checkIfDelegateIsGreen();
-            }, 8000);
+            }, 60000);
         },
 
         methods: {
@@ -195,6 +195,9 @@
 
                     // Get the user delegate share.
                     await this.getDelegateShare();
+
+                    // Check if delegate is green
+                    await this.checkIfDelegateIsGreen();
                 } catch (error) {
                     console.log("Failed to fetch data.");
                 }

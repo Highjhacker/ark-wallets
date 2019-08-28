@@ -2294,7 +2294,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     this.getDataFromAddress();
     setInterval(function () {
       _this.checkIfDelegateIsGreen();
-    }, 8000);
+    }, 60000);
   },
   methods: {
     getArkvatar: function () {
@@ -2598,20 +2598,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return this.getDelegateShare();
 
               case 15:
-                _context9.next = 20;
-                break;
+                _context9.next = 17;
+                return this.checkIfDelegateIsGreen();
 
               case 17:
-                _context9.prev = 17;
+                _context9.next = 22;
+                break;
+
+              case 19:
+                _context9.prev = 19;
                 _context9.t0 = _context9["catch"](0);
                 console.log("Failed to fetch data.");
 
-              case 20:
+              case 22:
               case "end":
                 return _context9.stop();
             }
           }
-        }, _callee9, this, [[0, 17]]);
+        }, _callee9, this, [[0, 19]]);
       }));
 
       function getDataFromAddress() {
@@ -2704,12 +2708,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -2717,7 +2715,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   data: function data() {
     return {
-      errors: [],
       walletAddress: null,
       arkvatarUrl: null,
       type: null,
@@ -2726,35 +2723,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   methods: {
-    openFormModal: function () {
-      var _openFormModal = _asyncToGenerator(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }));
-
-      function openFormModal() {
-        return _openFormModal.apply(this, arguments);
-      }
-
-      return openFormModal;
-    }(),
     getExplorerForType: function () {
       var _getExplorerForType = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(type) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(type) {
         var explorers;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context.prev = _context.next) {
               case 0:
                 explorers = [{
                   'type': 'Ark',
@@ -2763,16 +2739,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   'type': 'Qredit',
                   'url': 'https://explorer.qredit.io'
                 }];
-                return _context2.abrupt("return", explorers.find(function (match) {
+                return _context.abrupt("return", explorers.find(function (match) {
                   return match.type === type;
                 }));
 
               case 2:
               case "end":
-                return _context2.stop();
+                return _context.stop();
             }
           }
-        }, _callee2);
+        }, _callee);
       }));
 
       function getExplorerForType(_x) {
@@ -2784,29 +2760,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     getApiForType: function () {
       var _getApiForType = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(type) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(type) {
         var apis;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
                 apis = [{
                   'type': 'Ark',
-                  'url': 'https://node1.arknet.cloud/api/'
+                  'url': 'https://api.ark.land/api/'
                 }, {
                   'type': 'Qredit',
                   'url': 'https://api.qreditnode.com/api/'
                 }];
-                return _context3.abrupt("return", apis.find(function (match) {
+                return _context2.abrupt("return", apis.find(function (match) {
                   return match.type === type;
                 }));
 
               case 2:
               case "end":
-                return _context3.stop();
+                return _context2.stop();
             }
           }
-        }, _callee3);
+        }, _callee2);
       }));
 
       function getApiForType(_x2) {
@@ -2818,40 +2794,40 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     queryApi: function () {
       var _queryApi = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(type, address) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(type, address) {
         var api;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
-                _context4.prev = 0;
-                _context4.next = 3;
+                _context3.prev = 0;
+                _context3.next = 3;
                 return this.getApiForType(type);
 
               case 3:
-                api = _context4.sent;
-                _context4.next = 6;
+                api = _context3.sent;
+                _context3.next = 6;
                 return axios.get("".concat(api.url, "wallets/").concat(address));
 
               case 6:
-                return _context4.abrupt("return", _context4.sent);
+                return _context3.abrupt("return", _context3.sent);
 
               case 9:
-                _context4.prev = 9;
-                _context4.t0 = _context4["catch"](0);
+                _context3.prev = 9;
+                _context3.t0 = _context3["catch"](0);
                 this.isProcessing = false;
-                _context4.next = 14;
+                _context3.next = 14;
                 return this.makeToast("Invalid type for the submitted Cryptocurrency.", "exclamation-triangle", "error");
 
               case 14:
-                return _context4.abrupt("return", _context4.sent);
+                return _context3.abrupt("return", _context3.sent);
 
               case 15:
               case "end":
-                return _context4.stop();
+                return _context3.stop();
             }
           }
-        }, _callee4, this, [[0, 9]]);
+        }, _callee3, this, [[0, 9]]);
       }));
 
       function queryApi(_x3, _x4) {
@@ -2863,13 +2839,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     validateAddress: function () {
       var _validateAddress = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(address) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(address) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                _context5.prev = 0;
-                _context5.next = 3;
+                _context4.prev = 0;
+                _context4.next = 3;
                 return axios.get("https://retos.io/api/verify/".concat(address), {}, {
                   headers: {
                     'Content-Type': 'application/json'
@@ -2877,25 +2853,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
 
               case 3:
-                return _context5.abrupt("return", _context5.sent);
+                return _context4.abrupt("return", _context4.sent);
 
               case 6:
-                _context5.prev = 6;
-                _context5.t0 = _context5["catch"](0);
+                _context4.prev = 6;
+                _context4.t0 = _context4["catch"](0);
 
-                if (!(_context5.t0.response.status === 422)) {
-                  _context5.next = 10;
+                if (!(_context4.t0.response.status === 422)) {
+                  _context4.next = 10;
                   break;
                 }
 
-                return _context5.abrupt("return", true);
+                return _context4.abrupt("return", true);
 
               case 10:
               case "end":
-                return _context5.stop();
+                return _context4.stop();
             }
           }
-        }, _callee5, null, [[0, 6]]);
+        }, _callee4, null, [[0, 6]]);
       }));
 
       function validateAddress(_x5) {
@@ -2907,94 +2883,92 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     validateForm: function () {
       var _validateForm = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6() {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
         var _this = this;
 
         var existing, explorer, api, userWalletResponse, delegateData;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
-                _context6.prev = 0;
-                // We define the type of the Crypto to watch, Ark per default
+                _context5.prev = 0;
                 this.type = this.selected;
 
                 if (!(this.walletAddress == null)) {
-                  _context6.next = 6;
+                  _context5.next = 6;
                   break;
                 }
 
-                _context6.next = 5;
+                _context5.next = 5;
                 return this.makeToast("Can't submit an empty address.", "exclamation-triangle", "error");
 
               case 5:
-                return _context6.abrupt("return", _context6.sent);
+                return _context5.abrupt("return", _context5.sent);
 
               case 6:
-                this.isProcessing = true; // Get the localStorage array and the existings keys in it
-
+                this.isProcessing = true;
                 existing = localStorage.getItem("addresses");
                 existing = existing ? JSON.parse(existing) : [];
 
                 if (!existing.find(function (wallet) {
                   return wallet.address === _this.walletAddress;
                 })) {
-                  _context6.next = 14;
+                  _context5.next = 14;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context6.next = 13;
+                _context5.next = 13;
                 return this.makeToast("Wallet already monitored.", "exclamation-triangle", "error");
 
               case 13:
-                return _context6.abrupt("return", _context6.sent);
+                return _context5.abrupt("return", _context5.sent);
 
               case 14:
-                _context6.next = 16;
+                _context5.next = 16;
                 return this.validateAddress(this.walletAddress);
 
               case 16:
-                if (_context6.sent) {
-                  _context6.next = 21;
+                if (_context5.sent) {
+                  _context5.next = 21;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context6.next = 20;
+                _context5.next = 20;
                 return this.makeToast("Invalid address.", "exclamation-triangle", "error");
 
               case 20:
-                return _context6.abrupt("return", _context6.sent);
+                return _context5.abrupt("return", _context5.sent);
 
               case 21:
-                _context6.next = 23;
+                _context5.next = 23;
                 return this.getExplorerForType(this.type);
 
               case 23:
-                explorer = _context6.sent;
-                _context6.next = 26;
+                explorer = _context5.sent;
+                _context5.next = 26;
                 return this.getApiForType(this.type);
 
               case 26:
-                api = _context6.sent;
-                _context6.next = 29;
+                api = _context5.sent;
+                _context5.next = 29;
                 return this.queryApi(this.type, this.walletAddress);
 
               case 29:
-                userWalletResponse = _context6.sent;
+                userWalletResponse = _context5.sent;
 
                 if (userWalletResponse.data.data.vote) {
-                  _context6.next = 35;
+                  _context5.next = 35;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context6.next = 34;
+                _context5.next = 34;
                 return this.makeToast("This wallet have no delegate.", "exclamation-triangle", "error");
 
               case 34:
-                return _context6.abrupt("return", _context6.sent);
+                return _context5.abrupt("return", _context5.sent);
 
               case 35:
                 delegateData = {
@@ -3008,22 +2982,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 existing.push(delegateData);
                 localStorage.setItem("addresses", JSON.stringify(existing));
                 this.isProcessing = false;
-                _context6.next = 42;
+                _context5.next = 42;
                 return this.makeToast("Wallet added !", "check-circle", "success");
 
               case 42:
-                return _context6.abrupt("return", _context6.sent);
+                return _context5.abrupt("return", _context5.sent);
 
               case 45:
-                _context6.prev = 45;
-                _context6.t0 = _context6["catch"](0);
+                _context5.prev = 45;
+                _context5.t0 = _context5["catch"](0);
 
               case 47:
               case "end":
-                return _context6.stop();
+                return _context5.stop();
             }
           }
-        }, _callee6, this, [[0, 45]]);
+        }, _callee5, this, [[0, 45]]);
       }));
 
       function validateForm() {
@@ -4033,7 +4007,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.green-spinner {\n    background-color: rgb(65, 184, 131);\n}\n.green-spinner:hover {\n    background-color: #57d69c;\n}\n.toasted.bubble.error {\n    background-color: #f1373a;\n}\n.toasted.bubble.success {\n    background-color: #28a745;\n}\n", ""]);
+exports.push([module.i, "\n.toasted.bubble.error {\n    background-color: #f1373a;\n}\n.toasted.bubble.success {\n    background-color: #28a745;\n}\n.hover\\:bg-blue-custom:hover {\n    background-color: #D9ECE9;\n}\n", ""]);
 
 // exports
 
@@ -44149,20 +44123,6 @@ var render = function() {
       [
         _c("div", { staticClass: "md:flex md:items-center mb-6" }, [
           _c("div", { staticClass: "md:w-2/3" }, [
-            _vm.errors.length
-              ? _c("div", [
-                  _c("b", [_vm._v("Please correct the following error(s):")]),
-                  _vm._v(" "),
-                  _c(
-                    "ul",
-                    _vm._l(_vm.errors, function(error) {
-                      return _c("li", [_vm._v(_vm._s(error))])
-                    }),
-                    0
-                  )
-                ])
-              : _vm._e(),
-            _vm._v(" "),
             _c("input", {
               directives: [
                 {
@@ -44267,7 +44227,7 @@ var render = function() {
                   "button",
                   {
                     staticClass:
-                      "bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16",
+                      "hover:bg-blue-custom bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16",
                     attrs: { type: "submit" }
                   },
                   [_vm._v("\n                Add Wallet\n            ")]
@@ -44281,7 +44241,7 @@ var render = function() {
                     staticClass:
                       "bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16"
                   },
-                  [_vm.isProcessing ? _c("Stretch", {}) : _vm._e()],
+                  [_vm.isProcessing ? _c("Stretch") : _vm._e()],
                   1
                 )
               : _vm._e()

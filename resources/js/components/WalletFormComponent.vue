@@ -3,12 +3,6 @@
     <form @submit.prevent="validateForm" method="POST" class="w-full max-w-sm">
         <div class="md:flex md:items-center mb-6">
             <div class="md:w-2/3">
-                <div v-if="errors.length">
-                    <b>Please correct the following error(s):</b>
-                    <ul>
-                        <li v-for="error in errors">{{ error }}</li>
-                    </ul>
-                </div>
                 <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="walletAddress" v-model="walletAddress" name="walletAddress" type="text" placeholder="Valid Wallet Address">
             </div>
 
@@ -25,12 +19,12 @@
 
         <div class="md:flex md:items-center h-8">
             <div class="md:w-2/3">
-                <button v-if="!isProcessing" class="bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16" type="submit">
+                <button v-if="!isProcessing" class="hover:bg-blue-custom bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16" type="submit">
                     Add Wallet
                 </button>
 
                 <button v-if="isProcessing" class="bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16">
-                    <Stretch class="" v-if="isProcessing"></Stretch>
+                    <Stretch v-if="isProcessing"></Stretch>
                 </button>
             </div>
         </div>
@@ -45,7 +39,6 @@
         components: {Stretch},
         data() {
             return {
-                errors: [],
                 walletAddress: null,
                 arkvatarUrl: null,
                 type: null,
@@ -57,10 +50,6 @@
         },
 
         methods: {
-            async openFormModal() {
-
-            },
-
             async getExplorerForType(type) {
                 const explorers = [
                     {'type': 'Ark', 'url': 'https://explorer.ark.io/'},
@@ -71,7 +60,7 @@
             },
             async getApiForType(type) {
                 const apis = [
-                    {'type': 'Ark', 'url': 'https://node1.arknet.cloud/api/'},
+                    {'type': 'Ark', 'url': 'https://api.ark.land/api/'},
                     {'type': 'Qredit', 'url': 'https://api.qreditnode.com/api/'}
                 ];
 
@@ -94,8 +83,6 @@
                     return await axios.get(`https://retos.io/api/verify/${address}`, {}, {headers: {'Content-Type': 'application/json'}});
                 } catch (error) {
                     if (error.response.status === 422) {
-                        // Will require more work for bridgechains later
-                        // probably something around if response in ['ark', 'ki', ...]
                         return true;
                     }
                 }
@@ -103,7 +90,6 @@
 
             async validateForm() {
                 try {
-                    // We define the type of the Crypto to watch, Ark per default
                     this.type = this.selected;
 
                     if (this.walletAddress == null)
@@ -113,7 +99,6 @@
 
                     this.isProcessing = true;
 
-                    // Get the localStorage array and the existings keys in it
                     let existing = localStorage.getItem("addresses");
                     existing = existing ? JSON.parse(existing) : [];
 
@@ -156,17 +141,14 @@
 </script>
 
 <style>
-    .green-spinner {
-        background-color: rgb(65, 184, 131);
-    }
-
-    .green-spinner:hover {
-        background-color: #57d69c;
-    }
     .toasted.bubble.error {
         background-color: #f1373a;
     }
     .toasted.bubble.success {
         background-color: #28a745;
+    }
+
+    .hover\:bg-blue-custom:hover {
+        background-color: #D9ECE9;
     }
 </style>
