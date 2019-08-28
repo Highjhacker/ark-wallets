@@ -4,7 +4,7 @@
         <!-- Article -->
         <article class="overflow-hidden rounded-lg shadow-lg">
             <a v-if="!toggleArkvatars">
-                <img :alt="walletAddress.address" class="block h-auto w-full" :src="walletAddress.url" v-tooltip.top="walletAddress.address">
+                <img :alt="walletAddress.address" class="block h-auto w-full" :src="arkvatarUrl" v-tooltip.top="walletAddress.address">
             </a>
             <header class="flex items-center justify-between leading-tight p-2 md:p-4">
                 <h1 class="text-lg">
@@ -55,8 +55,6 @@
 </template>
 
 <script>
-    import * as Arkvatar from 'arkvatar-ts';
-
     export default {
         props:['wallet-address'],
 
@@ -76,6 +74,7 @@
                 delegateIsGreen: null,
                 deleted: false,
 
+                arkvatarUrl: null,
                 toggleArkvatar: false,
             }
         },
@@ -98,6 +97,20 @@
         },
 
         mounted() {
+            let wallet = this.findInLocalStorage(this.walletAddress.address);
+
+            if (wallet) {
+                this.walletBalance = wallet.walletBalance;
+                this.delegatePublicKey = wallet.delegatePublicKey;
+                this.delegateUsername = wallet.delegateUsername;
+                this.delegateAddress = wallet.delegateAddress;
+                this.delegateVotesTotal = wallet.delegateVotesTotal;
+                this.delegateRank = wallet.delegateRank;
+                this.delegateSharePercentage = wallet.delegateSharePercentage || 'Unknown';
+                this.delegatePayoutInterval = wallet.delegatePayoutInterval || 'Unknown';
+                this.arkvatarUrl = wallet.arkvatarUrl;
+            }
+
             this.getDataFromAddress();
 
             setInterval(() => {
@@ -106,17 +119,11 @@
         },
 
         methods: {
-            async getArkvatar(address) {
-                const data = await Arkvatar.show(address);
-
-                if (data.status === 200) {
-                    if (data.data.url) {
-                        return data.data.url;
-                    }
-                }
-                if (data.response.status === 404) {
-                    return "https://arkvatars.s3.eu-west-3.amazonaws.com/arkvatars/public/jolanbeer%40gmail.com.png";
-                }
+            findInLocalStorage(address) {
+                let existing = localStorage.getItem("addresses");
+                existing = existing ? JSON.parse(existing) : [];
+                let filtered = existing.filter(function(el) { return el.address === address});
+                return filtered[0];
             },
 
             async removeCard(walletAddress) {
@@ -132,34 +139,10 @@
                 await this.makeToast("Wallet removed", "check-circle", "success");
             },
 
-            async getWalletData() {
+            async getWalletBalance() {
                 const request = await axios.get(`${this.walletAddress.apiUrl}wallets/${this.walletAddress.address}`);
 
-                this.delegatePublicKey = request.data.data.vote;
-                this.walletBalance = request.data.data.balance;
-            },
-
-            async getDelegateData() {
-                const request = await axios.get(`${this.walletAddress.apiUrl}delegates/${this.delegatePublicKey}`);
-
-                this.delegateUsername = request.data.data.username;
-                this.delegateAddress = request.data.data.address;
-                this.delegateVotesTotal = request.data.data.votes;
-                this.delegateRank = request.data.data.rank;
-
-                return request;
-            },
-
-            async getDelegateShare() {
-                if (this.walletAddress.type === 'Ark') {
-                    const userDelegateShareResponse = await axios.get(`${'https://cors-anywhere.herokuapp.com/'}https://api.arkdelegates.io/api/delegates/${this.delegateUsername}`);
-
-                    this.delegateSharePercentage = userDelegateShareResponse.data.payout_percent;
-                    this.delegatePayoutInterval = userDelegateShareResponse.data.payout_interval;
-                } else {
-                    this.delegateSharePercentage = 'Unknown';
-                    this.delegatePayoutInterval = 'Unknown';
-                }
+                return request.data.data.balance;
             },
 
             async isDelegateActive() {
@@ -180,21 +163,19 @@
             async getDataFromAddress() {
                 try {
                     // Fetch the user input and process it on the /wallets/ endpoint of ARK API.
-                    await this.getWalletData();
+                    await this.getWalletBalance();
 
                     // Fetch information about user's delegate.
-                    const userDelegateResponse = await this.getDelegateData();
-
-                    this.walletAddress.url = await this.getArkvatar(this.delegateAddress);
+                    // const userDelegateResponse = await this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey);
 
                     // Calculate the time difference since last block, if inferior to twelve minutes it's good.
-                    await this.calculateForgingTime(userDelegateResponse);
+                    await this.calculateForgingTime(await this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey));
 
                     // Check if the delegate is active or standby.
                     await this.isDelegateActive();
 
                     // Get the user delegate share.
-                    await this.getDelegateShare();
+                    // await this.getDelegateShare();
 
                     // Check if delegate is green
                     await this.checkIfDelegateIsGreen();

@@ -2168,8 +2168,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var arkvatar_ts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! arkvatar-ts */ "./node_modules/arkvatar-ts/dist/index.js");
-/* harmony import */ var arkvatar_ts__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(arkvatar_ts__WEBPACK_IMPORTED_MODULE_1__);
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -2232,7 +2230,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['wallet-address'],
   data: function data() {
@@ -2249,6 +2246,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       delegateIsActive: null,
       delegateIsGreen: null,
       deleted: false,
+      arkvatarUrl: null,
       toggleArkvatar: false
     };
   },
@@ -2291,69 +2289,42 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   mounted: function mounted() {
     var _this = this;
 
+    var wallet = this.findInLocalStorage(this.walletAddress.address);
+
+    if (wallet) {
+      this.walletBalance = wallet.walletBalance;
+      this.delegatePublicKey = wallet.delegatePublicKey;
+      this.delegateUsername = wallet.delegateUsername;
+      this.delegateAddress = wallet.delegateAddress;
+      this.delegateVotesTotal = wallet.delegateVotesTotal;
+      this.delegateRank = wallet.delegateRank;
+      this.delegateSharePercentage = wallet.delegateSharePercentage || 'Unknown';
+      this.delegatePayoutInterval = wallet.delegatePayoutInterval || 'Unknown';
+      this.arkvatarUrl = wallet.arkvatarUrl;
+    }
+
     this.getDataFromAddress();
     setInterval(function () {
       _this.checkIfDelegateIsGreen();
     }, 60000);
   },
   methods: {
-    getArkvatar: function () {
-      var _getArkvatar = _asyncToGenerator(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(address) {
-        var data;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.next = 2;
-                return arkvatar_ts__WEBPACK_IMPORTED_MODULE_1__["show"](address);
-
-              case 2:
-                data = _context.sent;
-
-                if (!(data.status === 200)) {
-                  _context.next = 6;
-                  break;
-                }
-
-                if (!data.data.url) {
-                  _context.next = 6;
-                  break;
-                }
-
-                return _context.abrupt("return", data.data.url);
-
-              case 6:
-                if (!(data.response.status === 404)) {
-                  _context.next = 8;
-                  break;
-                }
-
-                return _context.abrupt("return", "https://arkvatars.s3.eu-west-3.amazonaws.com/arkvatars/public/jolanbeer%40gmail.com.png");
-
-              case 8:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }));
-
-      function getArkvatar(_x) {
-        return _getArkvatar.apply(this, arguments);
-      }
-
-      return getArkvatar;
-    }(),
+    findInLocalStorage: function findInLocalStorage(address) {
+      var existing = localStorage.getItem("addresses");
+      existing = existing ? JSON.parse(existing) : [];
+      var filtered = existing.filter(function (el) {
+        return el.address === address;
+      });
+      return filtered[0];
+    },
     removeCard: function () {
       var _removeCard = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(walletAddress) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(walletAddress) {
         var existing, filtered;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context.prev = _context.next) {
               case 0:
                 existing = localStorage.getItem("addresses");
                 existing = existing ? JSON.parse(existing) : [];
@@ -2362,10 +2333,40 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
                 localStorage.setItem("addresses", JSON.stringify(filtered));
                 this.deleted = true;
-                _context2.next = 7;
+                _context.next = 7;
                 return this.makeToast("Wallet removed", "check-circle", "success");
 
               case 7:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function removeCard(_x) {
+        return _removeCard.apply(this, arguments);
+      }
+
+      return removeCard;
+    }(),
+    getWalletBalance: function () {
+      var _getWalletBalance = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var request;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return axios.get("".concat(this.walletAddress.apiUrl, "wallets/").concat(this.walletAddress.address));
+
+              case 2:
+                request = _context2.sent;
+                return _context2.abrupt("return", request.data.data.balance);
+
+              case 4:
               case "end":
                 return _context2.stop();
             }
@@ -2373,135 +2374,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee2, this);
       }));
 
-      function removeCard(_x2) {
-        return _removeCard.apply(this, arguments);
+      function getWalletBalance() {
+        return _getWalletBalance.apply(this, arguments);
       }
 
-      return removeCard;
+      return getWalletBalance;
     }(),
-    getWalletData: function () {
-      var _getWalletData = _asyncToGenerator(
+    isDelegateActive: function () {
+      var _isDelegateActive = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
-        var request;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _context3.next = 2;
-                return axios.get("".concat(this.walletAddress.apiUrl, "wallets/").concat(this.walletAddress.address));
+                return _context3.abrupt("return", this.delegateRank <= 51 ? this.delegateIsActive = true : this.delegateIsActive = false);
 
-              case 2:
-                request = _context3.sent;
-                this.delegatePublicKey = request.data.data.vote;
-                this.walletBalance = request.data.data.balance;
-
-              case 5:
+              case 1:
               case "end":
                 return _context3.stop();
             }
           }
         }, _callee3, this);
-      }));
-
-      function getWalletData() {
-        return _getWalletData.apply(this, arguments);
-      }
-
-      return getWalletData;
-    }(),
-    getDelegateData: function () {
-      var _getDelegateData = _asyncToGenerator(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
-        var request;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                _context4.next = 2;
-                return axios.get("".concat(this.walletAddress.apiUrl, "delegates/").concat(this.delegatePublicKey));
-
-              case 2:
-                request = _context4.sent;
-                this.delegateUsername = request.data.data.username;
-                this.delegateAddress = request.data.data.address;
-                this.delegateVotesTotal = request.data.data.votes;
-                this.delegateRank = request.data.data.rank;
-                return _context4.abrupt("return", request);
-
-              case 8:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this);
-      }));
-
-      function getDelegateData() {
-        return _getDelegateData.apply(this, arguments);
-      }
-
-      return getDelegateData;
-    }(),
-    getDelegateShare: function () {
-      var _getDelegateShare = _asyncToGenerator(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
-        var userDelegateShareResponse;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                if (!(this.walletAddress.type === 'Ark')) {
-                  _context5.next = 8;
-                  break;
-                }
-
-                _context5.next = 3;
-                return axios.get('https://cors-anywhere.herokuapp.com/'.concat("https://api.arkdelegates.io/api/delegates/", this.delegateUsername));
-
-              case 3:
-                userDelegateShareResponse = _context5.sent;
-                this.delegateSharePercentage = userDelegateShareResponse.data.payout_percent;
-                this.delegatePayoutInterval = userDelegateShareResponse.data.payout_interval;
-                _context5.next = 10;
-                break;
-
-              case 8:
-                this.delegateSharePercentage = 'Unknown';
-                this.delegatePayoutInterval = 'Unknown';
-
-              case 10:
-              case "end":
-                return _context5.stop();
-            }
-          }
-        }, _callee5, this);
-      }));
-
-      function getDelegateShare() {
-        return _getDelegateShare.apply(this, arguments);
-      }
-
-      return getDelegateShare;
-    }(),
-    isDelegateActive: function () {
-      var _isDelegateActive = _asyncToGenerator(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
-          while (1) {
-            switch (_context6.prev = _context6.next) {
-              case 0:
-                return _context6.abrupt("return", this.delegateRank <= 51 ? this.delegateIsActive = true : this.delegateIsActive = false);
-
-              case 1:
-              case "end":
-                return _context6.stop();
-            }
-          }
-        }, _callee6, this);
       }));
 
       function isDelegateActive() {
@@ -2513,19 +2407,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     checkIfDelegateIsGreen: function () {
       var _checkIfDelegateIsGreen = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee7() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee7$(_context7) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context7.prev = _context7.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                return _context7.abrupt("return", this.delegateIsActive && this.delegateIsForging ? this.delegateIsGreen = true : this.delegateIsGreen = false);
+                return _context4.abrupt("return", this.delegateIsActive && this.delegateIsForging ? this.delegateIsGreen = true : this.delegateIsGreen = false);
 
               case 1:
               case "end":
-                return _context7.stop();
+                return _context4.stop();
             }
           }
-        }, _callee7, this);
+        }, _callee4, this);
       }));
 
       function checkIfDelegateIsGreen() {
@@ -2537,11 +2431,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     calculateForgingTime: function () {
       var _calculateForgingTime = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee8(delegateResponse) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(delegateResponse) {
         var lastBlockForged, now, timeDifference;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee8$(_context8) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context8.prev = _context8.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 lastBlockForged = delegateResponse.data.data.blocks.last.timestamp.unix;
                 now = Vue.moment().unix();
@@ -2550,13 +2444,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 4:
               case "end":
-                return _context8.stop();
+                return _context5.stop();
             }
           }
-        }, _callee8, this);
+        }, _callee5, this);
       }));
 
-      function calculateForgingTime(_x3) {
+      function calculateForgingTime(_x2) {
         return _calculateForgingTime.apply(this, arguments);
       }
 
@@ -2565,57 +2459,48 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     getDataFromAddress: function () {
       var _getDataFromAddress = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee9() {
-        var userDelegateResponse;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee9$(_context9) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
           while (1) {
-            switch (_context9.prev = _context9.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
-                _context9.prev = 0;
-                _context9.next = 3;
-                return this.getWalletData();
+                _context6.prev = 0;
+                _context6.next = 3;
+                return this.getWalletBalance();
 
               case 3:
-                _context9.next = 5;
-                return this.getDelegateData();
+                _context6.t0 = this;
+                _context6.next = 6;
+                return this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey);
 
-              case 5:
-                userDelegateResponse = _context9.sent;
-                _context9.next = 8;
-                return this.getArkvatar(this.delegateAddress);
+              case 6:
+                _context6.t1 = _context6.sent;
+                _context6.next = 9;
+                return _context6.t0.calculateForgingTime.call(_context6.t0, _context6.t1);
 
-              case 8:
-                this.walletAddress.url = _context9.sent;
-                _context9.next = 11;
-                return this.calculateForgingTime(userDelegateResponse);
-
-              case 11:
-                _context9.next = 13;
+              case 9:
+                _context6.next = 11;
                 return this.isDelegateActive();
 
-              case 13:
-                _context9.next = 15;
-                return this.getDelegateShare();
-
-              case 15:
-                _context9.next = 17;
+              case 11:
+                _context6.next = 13;
                 return this.checkIfDelegateIsGreen();
 
-              case 17:
-                _context9.next = 22;
+              case 13:
+                _context6.next = 18;
                 break;
 
-              case 19:
-                _context9.prev = 19;
-                _context9.t0 = _context9["catch"](0);
+              case 15:
+                _context6.prev = 15;
+                _context6.t2 = _context6["catch"](0);
                 console.log("Failed to fetch data.");
 
-              case 22:
+              case 18:
               case "end":
-                return _context9.stop();
+                return _context6.stop();
             }
           }
-        }, _callee9, this, [[0, 19]]);
+        }, _callee6, this, [[0, 15]]);
       }));
 
       function getDataFromAddress() {
@@ -2667,7 +2552,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vue_loading_spinner__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-loading-spinner */ "./node_modules/vue-loading-spinner/src/index.js");
+/* harmony import */ var arkvatar_ts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! arkvatar-ts */ "./node_modules/arkvatar-ts/dist/index.js");
+/* harmony import */ var arkvatar_ts__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(arkvatar_ts__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vue_loading_spinner__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-loading-spinner */ "./node_modules/vue-loading-spinner/src/index.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -2709,9 +2596,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    Stretch: vue_loading_spinner__WEBPACK_IMPORTED_MODULE_1__["Stretch"]
+    Stretch: vue_loading_spinner__WEBPACK_IMPORTED_MODULE_2__["Stretch"]
   },
   data: function data() {
     return {
@@ -2880,30 +2768,79 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return validateAddress;
     }(),
-    validateForm: function () {
-      var _validateForm = _asyncToGenerator(
+    getArkvatar: function () {
+      var _getArkvatar = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
-        var _this = this;
-
-        var existing, explorer, api, userWalletResponse, delegateData;
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(address) {
+        var data;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                _context5.prev = 0;
-                this.type = this.selected;
+                _context5.next = 2;
+                return arkvatar_ts__WEBPACK_IMPORTED_MODULE_1__["show"](address);
 
-                if (!(this.walletAddress == null)) {
+              case 2:
+                data = _context5.sent;
+
+                if (!(data.status === 200)) {
                   _context5.next = 6;
                   break;
                 }
 
-                _context5.next = 5;
+                if (!data.data.url) {
+                  _context5.next = 6;
+                  break;
+                }
+
+                return _context5.abrupt("return", data.data.url);
+
+              case 6:
+                if (!(data.response.status === 404)) {
+                  _context5.next = 8;
+                  break;
+                }
+
+                return _context5.abrupt("return", "https://arkvatars.s3.eu-west-3.amazonaws.com/arkvatars/public/jolanbeer%40gmail.com.png");
+
+              case 8:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5);
+      }));
+
+      function getArkvatar(_x6) {
+        return _getArkvatar.apply(this, arguments);
+      }
+
+      return getArkvatar;
+    }(),
+    validateForm: function () {
+      var _validateForm = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6() {
+        var _this = this;
+
+        var existing, explorer, api, userWalletResponse, delegatePublicKey, delegateData, delegateShareData, walletData;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _context6.prev = 0;
+                this.type = this.selected;
+
+                if (!(this.walletAddress == null)) {
+                  _context6.next = 6;
+                  break;
+                }
+
+                _context6.next = 5;
                 return this.makeToast("Can't submit an empty address.", "exclamation-triangle", "error");
 
               case 5:
-                return _context5.abrupt("return", _context5.sent);
+                return _context6.abrupt("return", _context6.sent);
 
               case 6:
                 this.isProcessing = true;
@@ -2913,91 +2850,115 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 if (!existing.find(function (wallet) {
                   return wallet.address === _this.walletAddress;
                 })) {
-                  _context5.next = 14;
+                  _context6.next = 14;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context5.next = 13;
+                _context6.next = 13;
                 return this.makeToast("Wallet already monitored.", "exclamation-triangle", "error");
 
               case 13:
-                return _context5.abrupt("return", _context5.sent);
+                return _context6.abrupt("return", _context6.sent);
 
               case 14:
-                _context5.next = 16;
+                _context6.next = 16;
                 return this.validateAddress(this.walletAddress);
 
               case 16:
-                if (_context5.sent) {
-                  _context5.next = 21;
+                if (_context6.sent) {
+                  _context6.next = 21;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context5.next = 20;
+                _context6.next = 20;
                 return this.makeToast("Invalid address.", "exclamation-triangle", "error");
 
               case 20:
-                return _context5.abrupt("return", _context5.sent);
+                return _context6.abrupt("return", _context6.sent);
 
               case 21:
-                _context5.next = 23;
+                _context6.next = 23;
                 return this.getExplorerForType(this.type);
 
               case 23:
-                explorer = _context5.sent;
-                _context5.next = 26;
+                explorer = _context6.sent;
+                _context6.next = 26;
                 return this.getApiForType(this.type);
 
               case 26:
-                api = _context5.sent;
-                _context5.next = 29;
+                api = _context6.sent;
+                _context6.next = 29;
                 return this.queryApi(this.type, this.walletAddress);
 
               case 29:
-                userWalletResponse = _context5.sent;
+                userWalletResponse = _context6.sent;
 
                 if (userWalletResponse.data.data.vote) {
-                  _context5.next = 35;
+                  _context6.next = 35;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context5.next = 34;
+                _context6.next = 34;
                 return this.makeToast("This wallet have no delegate.", "exclamation-triangle", "error");
 
               case 34:
-                return _context5.abrupt("return", _context5.sent);
+                return _context6.abrupt("return", _context6.sent);
 
               case 35:
-                delegateData = {
+                delegatePublicKey = userWalletResponse.data.data.vote;
+                _context6.next = 38;
+                return this.getDelegateData(api.url, delegatePublicKey);
+
+              case 38:
+                delegateData = _context6.sent;
+                _context6.next = 41;
+                return this.getDelegateShare(this.type, delegateData.data.data.username);
+
+              case 41:
+                delegateShareData = _context6.sent;
+                _context6.next = 44;
+                return this.getArkvatar(delegateData.data.data.address);
+
+              case 44:
+                this.arkvatarUrl = _context6.sent;
+                walletData = {
                   'address': this.walletAddress,
+                  'walletBalance': userWalletResponse.data.data.balance,
                   'arkvatarUrl': this.arkvatarUrl,
                   'type': this.type,
                   'apiUrl': api.url,
-                  'explorerUrl': explorer.url
+                  'explorerUrl': explorer.url,
+                  'delegateUsername': delegateData.data.data.username,
+                  'delegateAddress': delegateData.data.data.address,
+                  'delegatePublicKey': delegatePublicKey,
+                  'delegateVotesTotal': delegateData.data.data.votes,
+                  'delegateRank': delegateData.data.data.rank,
+                  'delegateSharePercentage': delegateShareData.data.payout_percent,
+                  'delegatePayoutInterval': delegateShareData.data.payout_interval
                 };
-                this.$root.$data.wallets.push(delegateData);
-                existing.push(delegateData);
+                this.$root.$data.wallets.push(walletData);
+                existing.push(walletData);
                 localStorage.setItem("addresses", JSON.stringify(existing));
                 this.isProcessing = false;
-                _context5.next = 42;
+                _context6.next = 52;
                 return this.makeToast("Wallet added !", "check-circle", "success");
 
-              case 42:
-                return _context5.abrupt("return", _context5.sent);
+              case 52:
+                return _context6.abrupt("return", _context6.sent);
 
-              case 45:
-                _context5.prev = 45;
-                _context5.t0 = _context5["catch"](0);
+              case 55:
+                _context6.prev = 55;
+                _context6.t0 = _context6["catch"](0);
 
-              case 47:
+              case 57:
               case "end":
-                return _context5.stop();
+                return _context6.stop();
             }
           }
-        }, _callee5, this, [[0, 45]]);
+        }, _callee6, this, [[0, 55]]);
       }));
 
       function validateForm() {
@@ -43855,10 +43816,7 @@ var render = function() {
                   }
                 ],
                 staticClass: "block h-auto w-full",
-                attrs: {
-                  alt: _vm.walletAddress.address,
-                  src: _vm.walletAddress.url
-                }
+                attrs: { alt: _vm.walletAddress.address, src: _vm.arkvatarUrl }
               })
             ])
           : _vm._e(),
@@ -65667,6 +65625,103 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/mixins/delegates.js":
+/*!******************************************!*\
+  !*** ./resources/js/mixins/delegates.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  methods: {
+    getDelegateData: function () {
+      var _getDelegateData = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(endpoint, publicKey) {
+        var request;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return axios.get("".concat(endpoint, "delegates/").concat(publicKey));
+
+              case 2:
+                request = _context.sent;
+                return _context.abrupt("return", request);
+
+              case 4:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      function getDelegateData(_x, _x2) {
+        return _getDelegateData.apply(this, arguments);
+      }
+
+      return getDelegateData;
+    }(),
+    getDelegateShare: function () {
+      var _getDelegateShare = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(type, delegateUsername) {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (!(type === 'Ark')) {
+                  _context2.next = 7;
+                  break;
+                }
+
+                _context2.next = 3;
+                return axios.get('https://cors-anywhere.herokuapp.com/'.concat("https://api.arkdelegates.io/api/delegates/", delegateUsername));
+
+              case 3:
+                response = _context2.sent;
+                return _context2.abrupt("return", response);
+
+              case 7:
+                return _context2.abrupt("return", {
+                  data: {
+                    'payout_percentage': 'Unknown',
+                    'payout_interval': 'Unknown'
+                  }
+                });
+
+              case 8:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      function getDelegateShare(_x3, _x4) {
+        return _getDelegateShare.apply(this, arguments);
+      }
+
+      return getDelegateShare;
+    }()
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/mixins/index.js":
 /*!**************************************!*\
   !*** ./resources/js/mixins/index.js ***!
@@ -65679,7 +65734,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash_merge__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash/merge */ "./node_modules/lodash/merge.js");
 /* harmony import */ var lodash_merge__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash_merge__WEBPACK_IMPORTED_MODULE_0__);
 
-var mixins = [__webpack_require__(/*! ./toast */ "./resources/js/mixins/toast.js")["default"], __webpack_require__(/*! ./clipboard */ "./resources/js/mixins/clipboard.js")["default"]];
+var mixins = [__webpack_require__(/*! ./toast */ "./resources/js/mixins/toast.js")["default"], __webpack_require__(/*! ./clipboard */ "./resources/js/mixins/clipboard.js")["default"], __webpack_require__(/*! ./delegates */ "./resources/js/mixins/delegates.js")["default"]];
 /* harmony default export */ __webpack_exports__["default"] = (lodash_merge__WEBPACK_IMPORTED_MODULE_0___default.a.apply(void 0, mixins));
 
 /***/ }),

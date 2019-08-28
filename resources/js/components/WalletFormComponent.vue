@@ -33,6 +33,7 @@
 </template>
 
 <script>
+    import * as Arkvatar from 'arkvatar-ts';
     import {Stretch} from 'vue-loading-spinner';
 
     export default {
@@ -88,6 +89,19 @@
                 }
             },
 
+            async getArkvatar(address) {
+                const data = await Arkvatar.show(address);
+
+                if (data.status === 200) {
+                    if (data.data.url) {
+                        return data.data.url;
+                    }
+                }
+                if (data.response.status === 404) {
+                    return "https://arkvatars.s3.eu-west-3.amazonaws.com/arkvatars/public/jolanbeer%40gmail.com.png";
+                }
+            },
+
             async validateForm() {
                 try {
                     this.type = this.selected;
@@ -123,10 +137,31 @@
                         return await this.makeToast("This wallet have no delegate.", "exclamation-triangle", "error");
                     }
 
-                    const delegateData = {'address': this.walletAddress, 'arkvatarUrl': this.arkvatarUrl, 'type': this.type, 'apiUrl': api.url, 'explorerUrl': explorer.url};
+                    let delegatePublicKey = userWalletResponse.data.data.vote;
+                    let delegateData = await this.getDelegateData(api.url, delegatePublicKey);
 
-                    this.$root.$data.wallets.push(delegateData);
-                    existing.push(delegateData);
+                    let delegateShareData = await this.getDelegateShare(this.type, delegateData.data.data.username);
+
+                    this.arkvatarUrl = await this.getArkvatar(delegateData.data.data.address);
+
+                    const walletData = {
+                        'address': this.walletAddress,
+                        'walletBalance': userWalletResponse.data.data.balance,
+                        'arkvatarUrl': this.arkvatarUrl,
+                        'type': this.type,
+                        'apiUrl': api.url,
+                        'explorerUrl': explorer.url,
+                        'delegateUsername': delegateData.data.data.username,
+                        'delegateAddress': delegateData.data.data.address,
+                        'delegatePublicKey': delegatePublicKey,
+                        'delegateVotesTotal': delegateData.data.data.votes,
+                        'delegateRank': delegateData.data.data.rank,
+                        'delegateSharePercentage': delegateShareData.data.payout_percent,
+                        'delegatePayoutInterval': delegateShareData.data.payout_interval
+                    };
+
+                    this.$root.$data.wallets.push(walletData);
+                    existing.push(walletData);
 
                     localStorage.setItem("addresses", JSON.stringify(existing));
 
