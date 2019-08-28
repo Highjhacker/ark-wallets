@@ -4,7 +4,7 @@
         <!-- Article -->
         <article class="overflow-hidden rounded-lg shadow-lg">
             <a href="#" v-if="!toggleArkvatars">
-                <img alt="Placeholder" class="block h-auto w-full" :src="walletAddress.url">
+                <img :alt="walletAddress.address" class="block h-auto w-full" :src="walletAddress.url" v-tooltip.bottom="walletAddress.address">
             </a>
             <header class="flex items-center justify-between leading-tight p-2 md:p-4">
                 <h1 class="text-lg">
