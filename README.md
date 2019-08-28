@@ -13,6 +13,11 @@ This project was funded by the Ark Community Fund. See the [proposal](https://ar
 
 - [Laravel](https://laravel.com/)
 - [VueJS](https://vuejs.org/)
+- [TailwindCSS](https://tailwindcss.com/)
+
+## Plugin
+
+A Plugin is available for [Ark Desktop Wallet](https://github.com/ArkEcosystem/desktop-wallet), you can find it [here](https://github.com/Highjhacker/arkwallets-plugin).
 
 ## Development setup
 
