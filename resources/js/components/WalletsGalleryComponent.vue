@@ -76,7 +76,7 @@
             },
 
             async clearAll() {
-                this.$root.$data.wallets.pop();
+                this.wallets = [];
                 localStorage.clear();
 
                 await this.makeToast("Successfully deleted all wallets !", "check-circle", "success");
