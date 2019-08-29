@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-wrap -mx-1 lg:-mx-4">
-        <wallet-card-component v-for="wallet in wallets" :key="wallet.id" :wallet-address="wallet"></wallet-card-component>
+        <wallet-card-component v-for="wallet in orderedWallets" :key="wallet.id" :wallet-address="wallet"></wallet-card-component>
         <fab
                 :position="position"
                 :bg-color="bgColor"
@@ -73,6 +73,7 @@
 
             async importLedger() {
                 console.log("Not implemented yet.");
+                await this.makeToast("Not implemented yet.", "times-circle", "error");
             },
 
             async clearAll() {
@@ -80,6 +81,12 @@
                 localStorage.clear();
 
                 await this.makeToast("Successfully deleted all wallets !", "check-circle", "success");
+            }
+        },
+        
+        computed: {
+            orderedWallets: function () {
+                return _.orderBy(this.wallets, 'id');
             }
         }
     }

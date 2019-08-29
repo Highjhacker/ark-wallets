@@ -46,6 +46,11 @@
                             v-tooltip.bottom="'Payouts History'">
                         <i class="fas fa-history"></i>
                     </button>
+
+                    <button v-on:click="updateCard(walletAddress)" class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1"
+                            v-tooltip.bottom="'Refresh Wallet'">
+                        <i class="fas fa-sync"></i>
+                    </button>
                 </div>
             </footer>
         </article>
@@ -126,6 +131,36 @@
                 return filtered[0];
             },
 
+            async updateCard(walletAddress) {
+                let existing = localStorage.getItem("addresses");
+                existing = existing ? JSON.parse(existing) : [];
+
+                let filtered = existing.filter(function(el) { return el.address !== walletAddress.address});
+
+                let walletData = await this.getDataFromAddress();
+
+                /*
+                let storeWallets = this.$root.$data.wallets;
+
+                for (let wallet in storeWallets) {
+                    if(storeWallets[wallet].address === walletAddress.address) {
+                        let match = storeWallets[wallet];
+                        console.log(match);
+                        storeWallets.push(Object.assign(match, walletData));
+                        console.log(match);
+                    }
+                }
+
+                console.log(storeWallets);
+                 */
+
+                filtered.push(walletData);
+
+                localStorage.setItem("addresses", JSON.stringify(filtered));
+
+                await this.makeToast("Wallet Updated", "check-circle", "success");
+            },
+
             async removeCard(walletAddress) {
                 let existing = localStorage.getItem("addresses");
                 existing = existing ? JSON.parse(existing) : [];
@@ -162,8 +197,7 @@
 
             async getDataFromAddress() {
                 try {
-                    const userWalletBalance = await this.getWalletBalance();
-                    this.walletBalance = userWalletBalance;
+                    this.walletBalance = await this.getWalletBalance();
 
                     // Fetch information about user's delegate.
                     const walletDelegate = await this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey);
@@ -185,6 +219,24 @@
 
                     // Check if delegate is green
                     await this.checkIfDelegateIsGreen();
+
+                    // Need to clean that up
+                    return {
+                        'id': this.walletAddress.id,
+                        'address': this.walletAddress.address,
+                        'walletBalance': this.walletBalance,
+                        'arkvatarUrl': this.arkvatarUrl, // Might want to update it too cause if delegate changed, arkvatar too
+                        'type': this.walletAddress.type,
+                        'apiUrl': this.walletAddress.apiUrl,
+                        'explorerUrl': this.walletAddress.explorerUrl,
+                        'delegateUsername': this.delegateUsername,
+                        'delegateAddress': this.delegateAddress,
+                        'delegatePublicKey': this.delegatePublicKey,
+                        'delegateVotesTotal': this.delegateVotesTotal,
+                        'delegateRank': this.delegateRank,
+                        'delegateSharePercentage': this.delegateSharePercentage,
+                        'delegatePayoutInterval': this.delegatePayoutInterval
+                    };
                 } catch (error) {
                     console.log(error);
                     console.log("Failed to fetch data.");

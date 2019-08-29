@@ -43,6 +43,7 @@
                 walletAddress: null,
                 arkvatarUrl: null,
                 type: null,
+                id: null,
 
                 isProcessing: false,
 
@@ -59,6 +60,7 @@
 
                 return explorers.find(match => match.type === type)
             },
+
             async getApiForType(type) {
                 const apis = [
                     {'type': 'Ark', 'url': 'https://api.ark.land/api/'},
@@ -144,7 +146,10 @@
 
                     this.arkvatarUrl = await this.getArkvatar(delegateData.data.data.address);
 
+                    this.id = Vue.moment().unix();
+
                     const walletData = {
+                        'id': this.id,
                         'address': this.walletAddress,
                         'walletBalance': userWalletResponse.data.data.balance,
                         'arkvatarUrl': this.arkvatarUrl,
