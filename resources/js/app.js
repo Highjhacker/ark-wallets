@@ -12,7 +12,7 @@ require('./bootstrap');
 window.Vue = require('vue');
 
 Vue.config.productionTip = false;
-Vue.config.devtools = false;
+//Vue.config.devtools = false;
 
 Vue.mixin(toast);
 Vue.use(require('vue-moment'));

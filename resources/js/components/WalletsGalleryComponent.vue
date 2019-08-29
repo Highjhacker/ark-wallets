@@ -8,6 +8,7 @@
                 @exportWallets="exportWallets"
                 @importWallets="importWallets"
                 @importLedger="importLedger"
+                @clearAll="clearAll"
         ></fab>
     </div>
 </template>
@@ -38,12 +39,18 @@
                         name: 'exportWallets',
                         icon: 'arrow_drop_down',
                         tooltip: 'Export Wallets',
-                        color: '#FF4136'
+                        color: '#85c1e9'
                     },
                     {
                         name: 'importLedger',
                         icon: 'account_balance',
                         tooltip: 'Import from Ledger',
+                        color: '#f7dc6f'
+                    },
+                    {
+                        name: 'clearAll',
+                        icon: 'delete',
+                        tooltip: 'Delete all wallets',
                         color: '#FF4136'
                     }
                 ]
@@ -66,6 +73,13 @@
 
             async importLedger() {
                 console.log("Not implemented yet.");
+            },
+
+            async clearAll() {
+                this.$root.$data.wallets.pop();
+                localStorage.clear();
+
+                await this.makeToast("Successfully deleted all wallets !", "check-circle", "success");
             }
         }
     }

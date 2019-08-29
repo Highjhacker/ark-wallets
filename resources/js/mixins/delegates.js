@@ -12,7 +12,6 @@ export default {
 
                 return response;
             } else {
-
                 return {
                     data: {
                         'payout_percentage': 'Unknown',

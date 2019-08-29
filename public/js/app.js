@@ -2298,8 +2298,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.delegateAddress = wallet.delegateAddress;
       this.delegateVotesTotal = wallet.delegateVotesTotal;
       this.delegateRank = wallet.delegateRank;
-      this.delegateSharePercentage = wallet.delegateSharePercentage || 'Unknown';
-      this.delegatePayoutInterval = wallet.delegatePayoutInterval || 'Unknown';
+      this.delegateSharePercentage = wallet.delegateSharePercentage;
+      this.delegatePayoutInterval = wallet.delegatePayoutInterval;
       this.arkvatarUrl = wallet.arkvatarUrl;
     }
 
@@ -2460,6 +2460,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _getDataFromAddress = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6() {
+        var userWalletBalance, walletDelegate, delegateShare;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
@@ -2469,38 +2470,54 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return this.getWalletBalance();
 
               case 3:
-                _context6.t0 = this;
-                _context6.next = 6;
+                userWalletBalance = _context6.sent;
+                this.walletBalance = userWalletBalance; // Fetch information about user's delegate.
+
+                _context6.next = 7;
                 return this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey);
 
-              case 6:
-                _context6.t1 = _context6.sent;
-                _context6.next = 9;
-                return _context6.t0.calculateForgingTime.call(_context6.t0, _context6.t1);
+              case 7:
+                walletDelegate = _context6.sent;
+                this.delegateVotesTotal = walletDelegate.data.data.votes;
+                this.delegateRank = walletDelegate.data.data.rank;
+                this.delegatePublicKey = walletDelegate.data.data.publicKey;
+                this.delegateAddress = walletDelegate.data.data.address; // Get the delegate sharing information
 
-              case 9:
-                _context6.next = 11;
+                _context6.next = 14;
+                return this.getDelegateShare(this.walletAddress.type, walletDelegate.data.data.username);
+
+              case 14:
+                delegateShare = _context6.sent;
+                this.delegateSharePercentage = delegateShare.data.payout_percent;
+                this.delegatePayoutInterval = delegateShare.data.payout_interval; // Calculate the time difference since last block, if inferior to twelve minutes it's good.
+
+                _context6.next = 19;
+                return this.calculateForgingTime(walletDelegate);
+
+              case 19:
+                _context6.next = 21;
                 return this.isDelegateActive();
 
-              case 11:
-                _context6.next = 13;
+              case 21:
+                _context6.next = 23;
                 return this.checkIfDelegateIsGreen();
 
-              case 13:
-                _context6.next = 18;
+              case 23:
+                _context6.next = 29;
                 break;
 
-              case 15:
-                _context6.prev = 15;
-                _context6.t2 = _context6["catch"](0);
+              case 25:
+                _context6.prev = 25;
+                _context6.t0 = _context6["catch"](0);
+                console.log(_context6.t0);
                 console.log("Failed to fetch data.");
 
-              case 18:
+              case 29:
               case "end":
                 return _context6.stop();
             }
           }
-        }, _callee6, this, [[0, 15]]);
+        }, _callee6, this, [[0, 25]]);
       }));
 
       function getDataFromAddress() {
@@ -3005,6 +3022,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 
 /*
   Need to refactor and use Stores (VueX) instead
@@ -3028,11 +3046,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         name: 'exportWallets',
         icon: 'arrow_drop_down',
         tooltip: 'Export Wallets',
-        color: '#FF4136'
+        color: '#85c1e9'
       }, {
         name: 'importLedger',
         icon: 'account_balance',
         tooltip: 'Import from Ledger',
+        color: '#f7dc6f'
+      }, {
+        name: 'clearAll',
+        icon: 'delete',
+        tooltip: 'Delete all wallets',
         color: '#FF4136'
       }]
     };
@@ -3114,6 +3137,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return importLedger;
+    }(),
+    clearAll: function () {
+      var _clearAll = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                this.$root.$data.wallets.pop();
+                localStorage.clear();
+                _context4.next = 4;
+                return this.makeToast("Successfully deleted all wallets !", "check-circle", "success");
+
+              case 4:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function clearAll() {
+        return _clearAll.apply(this, arguments);
+      }
+
+      return clearAll;
     }()
   }
 });
@@ -44251,7 +44301,8 @@ var render = function() {
         on: {
           exportWallets: _vm.exportWallets,
           importWallets: _vm.importWallets,
-          importLedger: _vm.importLedger
+          importLedger: _vm.importLedger,
+          clearAll: _vm.clearAll
         }
       })
     ],
@@ -65079,8 +65130,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
-Vue.config.productionTip = false;
-Vue.config.devtools = false;
+Vue.config.productionTip = false; //Vue.config.devtools = false;
+
 Vue.mixin(_mixins__WEBPACK_IMPORTED_MODULE_2__["default"]);
 Vue.use(__webpack_require__(/*! vue-moment */ "./node_modules/vue-moment/dist/vue-moment.js"));
 Vue.use(vue_toasted__WEBPACK_IMPORTED_MODULE_0___default.a, {

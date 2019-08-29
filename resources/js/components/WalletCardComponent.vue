@@ -106,8 +106,8 @@
                 this.delegateAddress = wallet.delegateAddress;
                 this.delegateVotesTotal = wallet.delegateVotesTotal;
                 this.delegateRank = wallet.delegateRank;
-                this.delegateSharePercentage = wallet.delegateSharePercentage || 'Unknown';
-                this.delegatePayoutInterval = wallet.delegatePayoutInterval || 'Unknown';
+                this.delegateSharePercentage = wallet.delegateSharePercentage;
+                this.delegatePayoutInterval = wallet.delegatePayoutInterval;
                 this.arkvatarUrl = wallet.arkvatarUrl;
             }
 
@@ -162,24 +162,31 @@
 
             async getDataFromAddress() {
                 try {
-                    // Fetch the user input and process it on the /wallets/ endpoint of ARK API.
-                    await this.getWalletBalance();
+                    const userWalletBalance = await this.getWalletBalance();
+                    this.walletBalance = userWalletBalance;
 
                     // Fetch information about user's delegate.
-                    // const userDelegateResponse = await this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey);
+                    const walletDelegate = await this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey);
+                    this.delegateVotesTotal = walletDelegate.data.data.votes;
+                    this.delegateRank = walletDelegate.data.data.rank;
+                    this.delegatePublicKey = walletDelegate.data.data.publicKey;
+                    this.delegateAddress = walletDelegate.data.data.address;
+
+                    // Get the delegate sharing information
+                    const delegateShare = await this.getDelegateShare(this.walletAddress.type, walletDelegate.data.data.username);
+                    this.delegateSharePercentage = delegateShare.data.payout_percent;
+                    this.delegatePayoutInterval = delegateShare.data.payout_interval;
 
                     // Calculate the time difference since last block, if inferior to twelve minutes it's good.
-                    await this.calculateForgingTime(await this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey));
+                    await this.calculateForgingTime(walletDelegate);
 
                     // Check if the delegate is active or standby.
                     await this.isDelegateActive();
 
-                    // Get the user delegate share.
-                    // await this.getDelegateShare();
-
                     // Check if delegate is green
                     await this.checkIfDelegateIsGreen();
                 } catch (error) {
+                    console.log(error);
                     console.log("Failed to fetch data.");
                 }
             },
