@@ -3,6 +3,7 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
+import Vuex from 'vuex'
 import Toasted from 'vue-toasted';
 import VTooltip from 'v-tooltip'
 import toast from "./mixins";
@@ -14,28 +15,40 @@ window.Vue = require('vue');
 Vue.config.productionTip = false;
 //Vue.config.devtools = false;
 
+Vue.use(Vuex);
 Vue.mixin(toast);
 Vue.use(require('vue-moment'));
 Vue.use(Toasted, {iconPack: 'fontawesome'});
 Vue.use(VTooltip);
 Vue.use(ToggleButton);
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
-
-// const files = require.context('./', true, /\.vue$/i);
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
-
 Vue.component('wallet-card-component', require('./components/WalletCardComponent.vue').default);
 Vue.component('wallet-form-component', require('./components/WalletFormComponent.vue').default);
 Vue.component('wallets-gallery-component', require('./components/WalletsGalleryComponent.vue').default);
 Vue.component('navbar-component', require('./components/NavbarComponent.vue').default);
 Vue.component('modal-component', require('./components/ImportModalComponent.vue').default);
+
+/** VueX Store **/
+const store = new Vuex.Store({
+    state: {
+        hideArkvatars: false,
+        wallets: JSON.parse(localStorage.getItem("addresses")) || [],
+    },
+    mutations: {
+        toggleArkvatars (state) {
+            state.hideArkvatars = !state.hideArkvatars;
+        }
+    },
+    getters: {
+        getWallets: state => {
+          return state.wallets
+        },
+
+        hideArkvatars: state => {
+            return state.hideArkvatars;
+        }
+    }
+});
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -45,11 +58,12 @@ Vue.component('modal-component', require('./components/ImportModalComponent.vue'
 
 const app = new Vue({
     el: '#app',
+    store,
     data() {
         return {
             wallets: JSON.parse(localStorage.getItem("addresses")) || [],
             toggleArkvatars: false,
-            exampleModalShowing: false,
+            exampleModalShowing: false
         }
     },
 });

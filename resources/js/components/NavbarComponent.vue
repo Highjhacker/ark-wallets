@@ -7,9 +7,7 @@
         <div class="lg:block">
             <ul class="inline-flex">
                 <li>
-                    <toggle-button @change="onChangeEventHandler"
-                                   v-model="toggleSwitch"
-                                   :value="false"
+                    <toggle-button @change="change"
                                    color="#82C7EB"
                                    :sync="true"
                                    :labels="true"
@@ -22,19 +20,15 @@
 
 <script>
     export default {
-        data() {
-            return {
-                toggleSwitch: false,
+        methods: {
+            async change() {
+                this.$store.commit('toggleArkvatars');
             }
         },
 
-        methods: {
-            async onChangeEventHandler() {
-                if(this.toggleSwitch === false) {
-                    this.$root.$data.toggleArkvatars = false;
-                } else {
-                    this.$root.$data.toggleArkvatars = true;
-                }
+        computed: {
+            hideArkvatars() {
+                return this.$store.state.hideArkvatars;
             }
         }
     }

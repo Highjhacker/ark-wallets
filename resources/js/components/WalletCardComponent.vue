@@ -3,7 +3,7 @@
     <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4 py-4" v-show="!deleted">
         <!-- Article -->
         <article class="overflow-hidden rounded-lg shadow-lg">
-            <a v-if="!toggleArkvatars">
+            <a v-if="!hideArkvatars">
                 <img :alt="walletAddress.address" class="block h-auto w-full" :src="arkvatarUrl" v-tooltip.top="walletAddress.address">
             </a>
             <header class="flex items-center justify-between leading-tight p-2 md:p-4">
@@ -80,7 +80,6 @@
                 deleted: false,
 
                 arkvatarUrl: null,
-                toggleArkvatar: false,
             }
         },
 
@@ -260,10 +259,6 @@
                 return this.dailyCalc * 30;
             },
 
-            toggleArkvatars: function() {
-                return this.$root.$data.toggleArkvatars;
-            },
-
             displayCurrencySign: function() {
                 if (this.walletAddress.type === 'Ark') {
                     return 'Ѧ';
@@ -272,6 +267,10 @@
                 if (this.walletAddress.type === 'Qredit') {
                     return 'XQR';
                 }
+            },
+
+            hideArkvatars() {
+                return this.$store.state.hideArkvatars;
             }
         }
     }
