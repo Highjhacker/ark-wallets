@@ -3,7 +3,7 @@
     <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4 py-4" v-show="!deleted">
         <!-- Article -->
         <article class="overflow-hidden rounded-lg shadow-lg">
-            <a v-if="!toggleArkvatars">
+            <a v-if="!hideArkvatars">
                 <img :alt="walletAddress.address" class="block h-auto w-full" :src="arkvatarUrl" v-tooltip.top="walletAddress.address">
             </a>
             <header class="flex items-center justify-between leading-tight p-2 md:p-4">
@@ -29,25 +29,25 @@
             </header>
 
             <footer class="flex items-center justify-between leading-none p-2 md:p-4">
-                <div class="inline-flex content-between">
-                    <button v-on:click="removeCard(walletAddress)" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded mx-1"
+                <div class="md:flex-wrap inline-flex content-between">
+                    <button v-on:click="removeCard(walletAddress)" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded mx-1 md:mb-2"
                             v-tooltip.bottom="'Remove Wallet'">
                         <i class="far fa-trash-alt"></i>
                     </button>
 
                     <a v-bind:href="`${walletAddress.explorerUrl}wallets/${walletAddress.address}`">
-                        <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded mx-1"
+                        <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded mx-1 md:mb-2"
                                 v-tooltip.bottom="'See on Explorer'">
                             <i class="fas fa-link"></i>
                         </button>
                     </a>
 
-                    <button class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 opacity-50 cursor-not-allowed"
+                    <button class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 opacity-50 cursor-not-allowed md:mb-2"
                             v-tooltip.bottom="'Payouts History'">
                         <i class="fas fa-history"></i>
                     </button>
 
-                    <button v-on:click="updateCard(walletAddress)" class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1"
+                    <button v-on:click="updateCard(walletAddress)" class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 md:mb-2"
                             v-tooltip.bottom="'Refresh Wallet'">
                         <i class="fas fa-sync"></i>
                     </button>
@@ -80,7 +80,6 @@
                 deleted: false,
 
                 arkvatarUrl: null,
-                toggleArkvatar: false,
             }
         },
 
@@ -101,8 +100,8 @@
             },
         },
 
-        mounted() {
-            let wallet = this.findInLocalStorage(this.walletAddress.address);
+        async mounted() {
+            let wallet = await this.findInLocalStorage(this.walletAddress.address);
 
             if (wallet) {
                 this.walletBalance = wallet.walletBalance;
@@ -116,7 +115,7 @@
                 this.arkvatarUrl = wallet.arkvatarUrl;
             }
 
-            this.getDataFromAddress();
+            await this.getDataFromAddress();
 
             setInterval(() => {
                 this.checkIfDelegateIsGreen();
@@ -124,7 +123,7 @@
         },
 
         methods: {
-            findInLocalStorage(address) {
+            async findInLocalStorage(address) {
                 let existing = localStorage.getItem("addresses");
                 existing = existing ? JSON.parse(existing) : [];
                 let filtered = existing.filter(function(el) { return el.address === address});
@@ -138,21 +137,6 @@
                 let filtered = existing.filter(function(el) { return el.address !== walletAddress.address});
 
                 let walletData = await this.getDataFromAddress();
-
-                /*
-                let storeWallets = this.$root.$data.wallets;
-
-                for (let wallet in storeWallets) {
-                    if(storeWallets[wallet].address === walletAddress.address) {
-                        let match = storeWallets[wallet];
-                        console.log(match);
-                        storeWallets.push(Object.assign(match, walletData));
-                        console.log(match);
-                    }
-                }
-
-                console.log(storeWallets);
-                 */
 
                 filtered.push(walletData);
 
@@ -260,10 +244,6 @@
                 return this.dailyCalc * 30;
             },
 
-            toggleArkvatars: function() {
-                return this.$root.$data.toggleArkvatars;
-            },
-
             displayCurrencySign: function() {
                 if (this.walletAddress.type === 'Ark') {
                     return 'Ѧ';
@@ -272,6 +252,10 @@
                 if (this.walletAddress.type === 'Qredit') {
                     return 'XQR';
                 }
+            },
+
+            hideArkvatars() {
+                return this.$store.state.hideArkvatars;
             }
         }
     }

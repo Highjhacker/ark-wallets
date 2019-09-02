@@ -7,7 +7,6 @@
                 :actions="fabActions"
                 @exportWallets="exportWallets"
                 @importWallets="importWallets"
-                @importLedger="importLedger"
                 @clearAll="clearAll"
         ></fab>
     </div>
@@ -40,12 +39,6 @@
                         icon: 'arrow_drop_down',
                         tooltip: 'Export Wallets',
                         color: '#85c1e9'
-                    },
-                    {
-                        name: 'importLedger',
-                        icon: 'account_balance',
-                        tooltip: 'Import from Ledger',
-                        color: '#f7dc6f'
                     },
                     {
                         name: 'clearAll',
