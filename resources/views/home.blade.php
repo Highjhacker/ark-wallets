@@ -64,7 +64,7 @@
                 Monitor your wallets with ease !
             </h2>
             <h3 class="text-2xl mb-8 text-gray-200">
-                Monitor your Ark and bridgechains wallets in a glance !
+                Monitor your Ark and bridgechains wallets at a glance !
             </h3>
             <wallet-form-component></wallet-form-component>
         </div>
