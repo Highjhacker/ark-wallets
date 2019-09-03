@@ -4,7 +4,7 @@
         <!-- Article -->
         <article class="overflow-hidden rounded-lg shadow-lg">
             <a v-if="!hideArkvatars">
-                <img :alt="walletAddress.address" class="block h-auto w-full" :src="arkvatarUrl" v-tooltip.top="walletAddress.address">
+                <img :alt="walletAddress.address" :class="{'opacity-50': inactive}" class="block h-auto w-full" :src="arkvatarUrl" v-tooltip.top="walletAddress.address">
             </a>
             <header class="flex items-center justify-between leading-tight p-2 md:p-4">
                 <h1 class="text-lg">
@@ -80,6 +80,7 @@
                 deleted: false,
 
                 arkvatarUrl: null,
+                inactive: false,
             }
         },
 
@@ -138,6 +139,8 @@
 
                 let walletData = await this.getDataFromAddress();
 
+                console.log(walletData);
+
                 filtered.push(walletData);
 
                 localStorage.setItem("addresses", JSON.stringify(filtered));
@@ -164,6 +167,12 @@
                 return request.data.data.balance;
             },
 
+            async getDelegatePublicKey() {
+                const request = await axios.get(`${this.walletAddress.apiUrl}wallets/${this.walletAddress.address}`);
+
+                return request.data.data.vote;
+            },
+
             async isDelegateActive() {
                 return (this.delegateRank <= 51 ? this.delegateIsActive = true : this.delegateIsActive = false);
             },
@@ -182,45 +191,68 @@
             async getDataFromAddress() {
                 try {
                     this.walletBalance = await this.getWalletBalance();
+                    this.delegatePublicKey = await this.getDelegatePublicKey();
 
-                    // Fetch information about user's delegate.
-                    const walletDelegate = await this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey);
-                    this.delegateVotesTotal = walletDelegate.data.data.votes;
-                    this.delegateRank = walletDelegate.data.data.rank;
-                    this.delegatePublicKey = walletDelegate.data.data.publicKey;
-                    this.delegateAddress = walletDelegate.data.data.address;
+                    if(this.delegatePublicKey) {
+                        // Fetch information about user's delegate.
+                        const walletDelegate = await this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey);
+                        this.delegateVotesTotal = walletDelegate.data.data.votes;
+                        this.delegateRank = walletDelegate.data.data.rank;
+                        this.delegatePublicKey = walletDelegate.data.data.publicKey;
+                        this.delegateAddress = walletDelegate.data.data.address;
 
-                    // Get the delegate sharing information
-                    const delegateShare = await this.getDelegateShare(this.walletAddress.type, walletDelegate.data.data.username);
-                    this.delegateSharePercentage = delegateShare.data.payout_percent;
-                    this.delegatePayoutInterval = delegateShare.data.payout_interval;
+                        // Get the delegate sharing information
+                        const delegateShare = await this.getDelegateShare(this.walletAddress.type, walletDelegate.data.data.username);
+                        this.delegateSharePercentage = delegateShare.data.payout_percent;
+                        this.delegatePayoutInterval = delegateShare.data.payout_interval;
+                        this.delegateUsername = delegateShare.data.name;
 
-                    // Calculate the time difference since last block, if inferior to twelve minutes it's good.
-                    await this.calculateForgingTime(walletDelegate);
+                        // Calculate the time difference since last block, if inferior to twelve minutes it's good.
+                        await this.calculateForgingTime(walletDelegate);
 
-                    // Check if the delegate is active or standby.
-                    await this.isDelegateActive();
+                        // Check if the delegate is active or standby.
+                        await this.isDelegateActive();
 
-                    // Check if delegate is green
-                    await this.checkIfDelegateIsGreen();
+                        // Check if delegate is green
+                        await this.checkIfDelegateIsGreen();
 
-                    // Need to clean that up
-                    return {
-                        'id': this.walletAddress.id,
-                        'address': this.walletAddress.address,
-                        'walletBalance': this.walletBalance,
-                        'arkvatarUrl': this.arkvatarUrl, // Might want to update it too cause if delegate changed, arkvatar too
-                        'type': this.walletAddress.type,
-                        'apiUrl': this.walletAddress.apiUrl,
-                        'explorerUrl': this.walletAddress.explorerUrl,
-                        'delegateUsername': this.delegateUsername,
-                        'delegateAddress': this.delegateAddress,
-                        'delegatePublicKey': this.delegatePublicKey,
-                        'delegateVotesTotal': this.delegateVotesTotal,
-                        'delegateRank': this.delegateRank,
-                        'delegateSharePercentage': this.delegateSharePercentage,
-                        'delegatePayoutInterval': this.delegatePayoutInterval
-                    };
+                        // Need to clean that up
+                        return {
+                            'id': this.walletAddress.id,
+                            'address': this.walletAddress.address,
+                            'walletBalance': this.walletBalance,
+                            'arkvatarUrl': this.arkvatarUrl,
+                            'type': this.walletAddress.type,
+                            'apiUrl': this.walletAddress.apiUrl,
+                            'explorerUrl': this.walletAddress.explorerUrl,
+                            'delegateUsername': this.delegateUsername,
+                            'delegateAddress': this.delegateAddress,
+                            'delegatePublicKey': this.delegatePublicKey,
+                            'delegateVotesTotal': this.delegateVotesTotal,
+                            'delegateRank': this.delegateRank,
+                            'delegateSharePercentage': this.delegateSharePercentage,
+                            'delegatePayoutInterval': this.delegatePayoutInterval
+                        };
+                    } else {
+                        this.inactive = true;
+
+                        return {
+                            'id': this.walletAddress.id,
+                            'address': this.walletAddress.address,
+                            'walletBalance': this.walletBalance,
+                            'arkvatarUrl': this.arkvatarUrl,
+                            'type': this.walletAddress.type,
+                            'apiUrl': this.walletAddress.apiUrl,
+                            'explorerUrl': this.walletAddress.explorerUrl,
+                            'delegateUsername': 'Unknown',
+                            'delegateAddress': 'Unknown',
+                            'delegatePublicKey': 'Unknown',
+                            'delegateVotesTotal': 'Unknown',
+                            'delegateRank': 'Unknown',
+                            'delegateSharePercentage': 'Unknown',
+                            'delegatePayoutInterval': 'Unknown'
+                        };
+                    }
                 } catch (error) {
                     console.log(error);
                     console.log("Failed to fetch data.");
