@@ -24,7 +24,6 @@
         methods: {
             async change() {
                 this.$store.commit('toggleArkvatars');
-                console.log(this.$store.state.showArkvatars);
             }
         },
 

@@ -55,7 +55,7 @@
             async getExplorerForType(type) {
                 const explorers = [
                     {'type': 'Ark', 'url': 'https://explorer.ark.io/'},
-                    {'type': 'Qredit', 'url': 'https://explorer.qredit.io'}
+                    {'type': 'Qredit', 'url': 'https://explorer.qredit.io/'}
                 ];
 
                 return explorers.find(match => match.type === type)

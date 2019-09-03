@@ -12,6 +12,9 @@
                         {{ delegateUsername }}
                     </p>
                     <p class="flex items-center no-underline text-black text-sm">
+                        {{ walletBalance | formatArktoshis(false) | currencyDecimal }} {{ displayCurrencySign }}
+                    </p>
+                    <p class="flex items-center no-underline text-black text-sm">
                         {{ dailyCalc | currencyDecimal }} {{ displayCurrencySign }} daily <br /> {{ [delegatePayoutInterval, 'hours'] | duration('humanize') | formatSharingSchedule }}
                     </p>
                 </h1>
@@ -87,6 +90,18 @@
         filters: {
             currencyDecimal(value) {
                 return value.toFixed(2)
+            },
+
+            countDecimals(value) {
+                if (value % 1 != 0) return value.toString().split(".")[1].length;
+                return 0;
+            },
+
+            formatArktoshis(value, rounded = false) {
+                let normalized = value / 1e8;
+                let response = rounded ? Math.round(normalized) : normalized;
+
+                return response;
             },
 
             formatSharingSchedule(value) {
@@ -203,7 +218,10 @@
                         const delegateShare = await this.getDelegateShare(this.walletAddress.type, walletDelegate.data.data.username);
                         this.delegateSharePercentage = delegateShare.data.payout_percent;
                         this.delegatePayoutInterval = delegateShare.data.payout_interval;
-                        this.delegateUsername = delegateShare.data.name;
+
+                        if(this.walletAddress.type === 'Ark') {
+                            this.delegateUsername = delegateShare.data.name;
+                        }
 
                         // Calculate the time difference since last block, if inferior to twelve minutes it's good.
                         await this.calculateForgingTime(walletDelegate);
