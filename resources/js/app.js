@@ -31,12 +31,12 @@ Vue.component('modal-component', require('./components/ImportModalComponent.vue'
 /** VueX Store **/
 const store = new Vuex.Store({
     state: {
-        hideArkvatars: false,
+        showArkvatars: true,
         wallets: JSON.parse(localStorage.getItem("addresses")) || [],
     },
     mutations: {
         toggleArkvatars (state) {
-            state.hideArkvatars = !state.hideArkvatars;
+            state.showArkvatars = !state.showArkvatars;
         }
     },
     getters: {
@@ -44,8 +44,8 @@ const store = new Vuex.Store({
           return state.wallets
         },
 
-        hideArkvatars: state => {
-            return state.hideArkvatars;
+        showArkvatars: state => {
+            return state.showArkvatars;
         }
     }
 });
@@ -62,7 +62,7 @@ const app = new Vue({
     data() {
         return {
             wallets: JSON.parse(localStorage.getItem("addresses")) || [],
-            toggleArkvatars: false,
+            //toggleArkvatars: true,
             exampleModalShowing: false
         }
     },

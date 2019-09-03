@@ -7,11 +7,12 @@
         <div class="lg:block">
             <ul class="inline-flex">
                 <li>
-                    <toggle-button @change="change"
-                                   color="#82C7EB"
-                                   :sync="true"
-                                   :labels="true"
-                                   v-tooltip.right="'Toggle Arkvatars'"/>
+                    <toggle-button
+                            :value="showArkvatars"
+                            @change="change"
+                            color="#82C7EB"
+                            :sync="true"
+                            :labels="true"/>
                 </li>
             </ul>
         </div>
@@ -23,12 +24,13 @@
         methods: {
             async change() {
                 this.$store.commit('toggleArkvatars');
+                console.log(this.$store.state.showArkvatars);
             }
         },
 
         computed: {
-            hideArkvatars() {
-                return this.$store.state.hideArkvatars;
+            showArkvatars() {
+                return this.$store.state.showArkvatars;
             }
         }
     }

@@ -3,7 +3,7 @@
     <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4 py-4" v-show="!deleted">
         <!-- Article -->
         <article class="overflow-hidden rounded-lg shadow-lg">
-            <a v-if="!hideArkvatars">
+            <a v-if="showArkvatars">
                 <img :alt="walletAddress.address" :class="{'opacity-50': inactive}" class="block h-auto w-full" :src="arkvatarUrl" v-tooltip.top="walletAddress.address">
             </a>
             <header class="flex items-center justify-between leading-tight p-2 md:p-4">
@@ -284,8 +284,8 @@
                 }
             },
 
-            hideArkvatars() {
-                return this.$store.state.hideArkvatars;
+            showArkvatars() {
+                return this.$store.state.showArkvatars;
             }
         }
     }
