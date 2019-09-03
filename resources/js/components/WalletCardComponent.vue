@@ -139,8 +139,6 @@
 
                 let walletData = await this.getDataFromAddress();
 
-                console.log(walletData);
-
                 filtered.push(walletData);
 
                 localStorage.setItem("addresses", JSON.stringify(filtered));
