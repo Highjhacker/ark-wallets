@@ -12,7 +12,8 @@
                             @change="change"
                             color="#82C7EB"
                             :sync="true"
-                            :labels="true"/>
+                            :labels="true"
+                            v-tooltip.right="'Display Arkvatars'"/>
                 </li>
             </ul>
         </div>

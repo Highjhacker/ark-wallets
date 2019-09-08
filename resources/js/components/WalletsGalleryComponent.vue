@@ -13,9 +13,6 @@
 </template>
 
 <script>
-    /*
-      Need to refactor and use Stores (VueX) instead
-    */
     import fab from 'vue-fab';
 
     export default {
@@ -52,7 +49,7 @@
 
         methods: {
             async importWallets() {
-                this.$root.$data.exampleModalShowing = true;
+                this.$store.commit('handleImportModal');
             },
 
             async exportWallets() {

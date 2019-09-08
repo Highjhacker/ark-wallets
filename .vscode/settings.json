@@ -1,0 +1,11 @@
+{
+    "editor.fontSize": 16,
+    "editor.fontFamily": "Fira Code",
+    // Whenever something is pasted, apply format to it
+    "editor.formatOnPaste": true,
+    // Highlight modified tabs
+    "workbench.editor.highlightModifiedTabs": true,
+    // Trim extra newlines at the end of the file
+    "files.trimFinalNewlines": true,
+
+}

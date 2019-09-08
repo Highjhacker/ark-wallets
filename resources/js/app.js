@@ -1,8 +1,4 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
+/* eslint-disable no-undef */
 import Vuex from 'vuex'
 import Toasted from 'vue-toasted';
 import VTooltip from 'v-tooltip'
@@ -11,9 +7,6 @@ import ToggleButton from 'vue-js-toggle-button';
 require('./bootstrap');
 
 window.Vue = require('vue');
-
-Vue.config.productionTip = false;
-//Vue.config.devtools = false;
 
 Vue.use(Vuex);
 Vue.mixin(toast);
@@ -32,37 +25,40 @@ Vue.component('modal-component', require('./components/ImportModalComponent.vue'
 const store = new Vuex.Store({
     state: {
         showArkvatars: true,
+        showImportModal: false,
         wallets: JSON.parse(localStorage.getItem("addresses")) || [],
     },
     mutations: {
         toggleArkvatars (state) {
             state.showArkvatars = !state.showArkvatars;
+        },
+
+        handleImportModal (state) {
+            state.showImportModal = !state.showImportModal;
         }
     },
     getters: {
         getWallets: state => {
-          return state.wallets
+            return state.wallets
         },
 
         showArkvatars: state => {
             return state.showArkvatars;
+        },
+
+        showImportModal: state => {
+            return state.showImportModal;
         }
     }
 });
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
+// eslint-disable-next-line
 const app = new Vue({
     el: '#app',
     store,
     data() {
         return {
             wallets: JSON.parse(localStorage.getItem("addresses")) || [],
-            //toggleArkvatars: true,
             exampleModalShowing: false
         }
     },

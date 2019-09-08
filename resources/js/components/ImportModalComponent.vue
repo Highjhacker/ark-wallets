@@ -1,6 +1,6 @@
 <template>
     <Transition name="fade">
-        <div v-if="showing"
+        <div v-if="showImportModal"
              class="fixed inset-0 w-full h-screen flex items-center justify-center bg-semi-75 z-10"
              @click.self="close">
 
@@ -10,12 +10,13 @@
                 <form>
                     <textarea v-model="walletsJson" class="w-full h-16 resize-y border rounded focus:outline-none focus:shadow-outline"></textarea>
                     <div class="inline-flex items-center justify-between">
-                        <button @click="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button"
+                            @click="submit">
                             Import
                         </button>
                     </div>
                     <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            @click.prevent="close">
+                        @click.prevent="close">
                         Close
                     </button>
                 </form>
@@ -26,13 +27,6 @@
 
 <script>
     export default {
-        props: {
-            showing: {
-                required: true,
-                type: Boolean
-            }
-        },
-
         data() {
             return {
                 walletsJson: null
@@ -41,7 +35,7 @@
 
         methods: {
             async close() {
-                this.$emit('close');
+                this.$store.commit('handleImportModal');
             },
 
             async submit() {
@@ -52,10 +46,14 @@
                         let existing = localStorage.getItem("addresses");
                         existing = existing ? JSON.parse(existing) : [];
 
-                        localStorage.setItem("addresses", JSON.stringify(existing.concat(validatedInput)));
+                        let merged = existing.concat(validatedInput);
+
+                        let filtered = _.uniqBy(merged, "address");
+
+                        localStorage.setItem("addresses", JSON.stringify(filtered));
 
                         await this.makeToast("Wallets imported !", "check-circle", "success");
-
+                        
                         this.$nextTick(async () => {
                             window.location.reload();
                         });
@@ -65,6 +63,12 @@
 
                     await this.makeToast("Invalid JSON format", "times-circle", "error");
                 }
+            }
+        },
+
+        computed: {
+            showImportModal() {
+                return this.$store.state.showImportModal;
             }
         }
     }
