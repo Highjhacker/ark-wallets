@@ -100,7 +100,7 @@
                     }
                 }
                 if (data.response.status === 404) {
-                    return "https://arkvatars.s3.eu-west-3.amazonaws.com/arkvatars/public/jolanbeer%40gmail.com.png";
+                    return "https://arkvatars.s3.eu-west-3.amazonaws.com/arkvatars/public/ALhWkv1uGfujoVdRRiaFzrKzCwJvPkz7hi.png";
                 }
             },
 
@@ -165,7 +165,8 @@
                         'delegatePayoutInterval': delegateShareData.data.payout_interval
                     };
 
-                    this.$root.$data.wallets.push(walletData);
+                    this.$store.commit('addWallet', walletData);
+
                     existing.push(walletData);
 
                     localStorage.setItem("addresses", JSON.stringify(existing));

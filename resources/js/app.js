@@ -35,18 +35,26 @@ const store = new Vuex.Store({
 
         handleImportModal (state) {
             state.showImportModal = !state.showImportModal;
+        },
+
+        addWallet(state, wallet) {
+            state.wallets.push(wallet);
+        },
+
+        clearWallets(state) {
+            state.wallets = [];
         }
     },
     getters: {
-        getWallets: state => {
+        wallets: state => {
             return state.wallets
         },
 
-        showArkvatars: state => {
+        arkvatars: state => {
             return state.showArkvatars;
         },
 
-        showImportModal: state => {
+        importModal: state => {
             return state.showImportModal;
         }
     }
@@ -56,10 +64,4 @@ const store = new Vuex.Store({
 const app = new Vue({
     el: '#app',
     store,
-    data() {
-        return {
-            wallets: JSON.parse(localStorage.getItem("addresses")) || [],
-            exampleModalShowing: false
-        }
-    },
 });

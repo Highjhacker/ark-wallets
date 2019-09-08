@@ -20,8 +20,6 @@
 
         data() {
             return {
-                wallets: this.$root.$data.wallets,
-
                 bgColor: '#57d69c',
                 position: 'bottom-right',
                 fabActions: [
@@ -67,7 +65,7 @@
             },
 
             async clearAll() {
-                this.wallets = [];
+                this.$store.commit('clearWallets');
                 localStorage.clear();
 
                 await this.makeToast("Successfully deleted all wallets !", "check-circle", "success");
@@ -76,7 +74,7 @@
         
         computed: {
             orderedWallets: function () {
-                return _.orderBy(this.wallets, 'id');
+                return _.orderBy(this.$store.getters.wallets, 'id');
             }
         }
     }

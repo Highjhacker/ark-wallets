@@ -3005,7 +3005,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   break;
                 }
 
-                return _context5.abrupt("return", "https://arkvatars.s3.eu-west-3.amazonaws.com/arkvatars/public/jolanbeer%40gmail.com.png");
+                return _context5.abrupt("return", "https://arkvatars.s3.eu-west-3.amazonaws.com/arkvatars/public/ALhWkv1uGfujoVdRRiaFzrKzCwJvPkz7hi.png");
 
               case 8:
               case "end":
@@ -3145,7 +3145,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   'delegateSharePercentage': delegateShareData.data.payout_percent,
                   'delegatePayoutInterval': delegateShareData.data.payout_interval
                 };
-                this.$root.$data.wallets.push(walletData);
+                this.$store.commit('addWallet', walletData);
                 existing.push(walletData);
                 localStorage.setItem("addresses", JSON.stringify(existing));
                 this.isProcessing = false;
@@ -3218,7 +3218,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   data: function data() {
     return {
-      wallets: this.$root.$data.wallets,
       bgColor: '#57d69c',
       position: 'bottom-right',
       fabActions: [{
@@ -3327,7 +3326,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                this.wallets = [];
+                this.$store.commit('clearWallets');
                 localStorage.clear();
                 _context4.next = 4;
                 return this.makeToast("Successfully deleted all wallets !", "check-circle", "success");
@@ -3349,7 +3348,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   computed: {
     orderedWallets: function orderedWallets() {
-      return _.orderBy(this.wallets, 'id');
+      return _.orderBy(this.$store.getters.wallets, 'id');
     }
   }
 });
@@ -66413,16 +66412,22 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_0__["default"].Store({
     },
     handleImportModal: function handleImportModal(state) {
       state.showImportModal = !state.showImportModal;
+    },
+    addWallet: function addWallet(state, wallet) {
+      state.wallets.push(wallet);
+    },
+    clearWallets: function clearWallets(state) {
+      state.wallets = [];
     }
   },
   getters: {
-    getWallets: function getWallets(state) {
+    wallets: function wallets(state) {
       return state.wallets;
     },
-    showArkvatars: function showArkvatars(state) {
+    arkvatars: function arkvatars(state) {
       return state.showArkvatars;
     },
-    showImportModal: function showImportModal(state) {
+    importModal: function importModal(state) {
       return state.showImportModal;
     }
   }
@@ -66430,13 +66435,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_0__["default"].Store({
 
 var app = new Vue({
   el: '#app',
-  store: store,
-  data: function data() {
-    return {
-      wallets: JSON.parse(localStorage.getItem("addresses")) || [],
-      exampleModalShowing: false
-    };
-  }
+  store: store
 });
 
 /***/ }),
