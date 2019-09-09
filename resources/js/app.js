@@ -46,6 +46,11 @@ const store = new Vuex.Store({
         }
     },
     getters: {
+        walletByAddress: (state) => (address) => {
+            return state.wallets.filter(item => {
+                return item.address === address
+            })[0];
+        },
         wallets: state => {
             return state.wallets
         },

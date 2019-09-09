@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-wrap -mx-1 lg:-mx-4">
-        <wallet-card-component v-for="wallet in orderedWallets" :key="wallet.id" :wallet-address="wallet"></wallet-card-component>
+        <wallet-card-component v-for="wallet in orderedWallets" :key="wallet.id" :wallet="wallet"></wallet-card-component>
         <fab
                 :position="position"
                 :bg-color="bgColor"

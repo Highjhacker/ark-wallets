@@ -4,7 +4,7 @@
         <!-- Article -->
         <article class="overflow-hidden rounded-lg shadow-lg">
             <a v-if="showArkvatars">
-                <img :alt="walletAddress.address" :class="{'opacity-50': inactive}" class="block h-auto w-full" :src="arkvatarUrl" v-tooltip.top="walletAddress.address">
+                <img :alt="wallet.address" :class="{'opacity-50': inactive}" class="block h-auto w-full" :src="arkvatarUrl" v-tooltip.top="wallet.address">
             </a>
             <header class="flex items-center justify-between leading-tight p-2 md:p-4">
                 <h1 class="text-lg">
@@ -14,7 +14,7 @@
                     <p class="flex items-center no-underline text-black text-sm">
                         {{ walletBalance | formatArktoshis(false) | currencyDecimal }} {{ displayCurrencySign }}
                     </p>
-                    <p class="flex items-center no-underline text-black text-sm">
+                    <p class="flex items-center no-underline text-black text-sm has-tooltip">
                         {{ dailyCalc | currencyDecimal }} {{ displayCurrencySign }} daily <br /> {{ [delegatePayoutInterval, 'hours'] | duration('humanize') | formatSharingSchedule }}
                     </p>
                 </h1>
@@ -33,12 +33,12 @@
 
             <footer class="flex items-center justify-between leading-none p-2 md:p-4">
                 <div class="md:flex-wrap inline-flex content-between">
-                    <button v-on:click="removeCard(walletAddress)" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded mx-1 md:mb-2"
+                    <button v-on:click="removeCard(wallet.address)" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded mx-1 md:mb-2"
                             v-tooltip.bottom="'Remove Wallet'">
                         <i class="far fa-trash-alt"></i>
                     </button>
 
-                    <a v-bind:href="`${walletAddress.explorerUrl}wallets/${walletAddress.address}`">
+                    <a v-bind:href="`${wallet.explorerUrl}wallets/${wallet.address}`">
                         <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded mx-1 md:mb-2"
                                 v-tooltip.bottom="'See on Explorer'">
                             <i class="fas fa-link"></i>
@@ -50,7 +50,7 @@
                         <i class="fas fa-history"></i>
                     </button>
 
-                    <button v-on:click="updateCard(walletAddress)" class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 md:mb-2"
+                    <button v-on:click="updateCard(wallet.address)" class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 md:mb-2"
                             v-tooltip.bottom="'Refresh Wallet'">
                         <i class="fas fa-sync"></i>
                     </button>
@@ -64,7 +64,7 @@
 
 <script>
     export default {
-        props:['wallet-address'],
+        props:['wallet'],
 
         data() {
             return {
@@ -105,19 +105,12 @@
             },
 
             formatSharingSchedule(value) {
-                if (value === '6 hours') { return 'every 6 hours'; }
-                if (value === '12 hours') { return 'every 12 hours'; }
-                if (value === 'a day') { return 'daily'; }
-                if (value === '2 days') { return '2 days'; }
-                if (value === '3 days') { return '3 days'; }
-                if (value === '5 days') { return '5 days'; }
-                if (value === '7 days') { return 'weekly'; }
-                else { return 'unknown'; }
+                return value === 'a few seconds' ? 'unknown' : value;
             },
         },
 
         async mounted() {
-            let wallet = await this.findInLocalStorage(this.walletAddress.address);
+            let wallet = await this.findInLocalStorage(this.wallet.address);
 
             if (wallet) {
                 this.walletBalance = wallet.walletBalance;
@@ -140,17 +133,16 @@
 
         methods: {
             async findInLocalStorage(address) {
-                let existing = localStorage.getItem("addresses");
-                existing = existing ? JSON.parse(existing) : [];
-                let filtered = existing.filter(function(el) { return el.address === address});
-                return filtered[0];
+                return this.$store.getters.walletByAddress(address);
             },
 
-            async updateCard(walletAddress) {
+            async updateCard(address) {
                 let existing = localStorage.getItem("addresses");
                 existing = existing ? JSON.parse(existing) : [];
 
-                let filtered = existing.filter(function(el) { return el.address !== walletAddress.address});
+                let filtered = existing.filter(wallet => wallet.address !== address);
+
+                console.log(filtered);
 
                 let walletData = await this.getDataFromAddress();
 
@@ -161,11 +153,11 @@
                 await this.makeToast("Wallet Updated", "check-circle", "success");
             },
 
-            async removeCard(walletAddress) {
+            async removeCard(address) {
                 let existing = localStorage.getItem("addresses");
                 existing = existing ? JSON.parse(existing) : [];
 
-                let filtered = existing.filter(function(el) { return el.address !== walletAddress.address});
+                let filtered = existing.filter(wallet => wallet.address !== address);
 
                 localStorage.setItem("addresses", JSON.stringify(filtered));
 
@@ -175,13 +167,13 @@
             },
 
             async getWalletBalance() {
-                const request = await axios.get(`${this.walletAddress.apiUrl}wallets/${this.walletAddress.address}`);
+                const request = await axios.get(`${this.wallet.apiUrl}wallets/${this.wallet.address}`);
 
                 return request.data.data.balance;
             },
 
             async getDelegatePublicKey() {
-                const request = await axios.get(`${this.walletAddress.apiUrl}wallets/${this.walletAddress.address}`);
+                const request = await axios.get(`${this.wallet.apiUrl}wallets/${this.wallet.address}`);
 
                 return request.data.data.vote;
             },
@@ -208,18 +200,18 @@
 
                     if(this.delegatePublicKey) {
                         // Fetch information about user's delegate.
-                        const walletDelegate = await this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey);
+                        const walletDelegate = await this.getDelegateData(this.wallet.apiUrl, this.delegatePublicKey);
                         this.delegateVotesTotal = walletDelegate.data.data.votes;
                         this.delegateRank = walletDelegate.data.data.rank;
                         this.delegatePublicKey = walletDelegate.data.data.publicKey;
                         this.delegateAddress = walletDelegate.data.data.address;
 
                         // Get the delegate sharing information
-                        const delegateShare = await this.getDelegateShare(this.walletAddress.type, walletDelegate.data.data.username);
+                        const delegateShare = await this.getDelegateShare(this.wallet.type, walletDelegate.data.data.username);
                         this.delegateSharePercentage = delegateShare.data.payout_percent;
                         this.delegatePayoutInterval = delegateShare.data.payout_interval;
 
-                        if(this.walletAddress.type === 'Ark') {
+                        if(this.wallet.type === 'Ark') {
                             this.delegateUsername = delegateShare.data.name;
                         }
 
@@ -232,42 +224,24 @@
                         // Check if delegate is green
                         await this.checkIfDelegateIsGreen();
 
-                        // Need to clean that up
                         return {
-                            'id': this.walletAddress.id,
-                            'address': this.walletAddress.address,
+                            'id': this.wallet.id,
+                            'address': this.wallet.address,
                             'walletBalance': this.walletBalance,
                             'arkvatarUrl': this.arkvatarUrl,
-                            'type': this.walletAddress.type,
-                            'apiUrl': this.walletAddress.apiUrl,
-                            'explorerUrl': this.walletAddress.explorerUrl,
-                            'delegateUsername': this.delegateUsername,
-                            'delegateAddress': this.delegateAddress,
-                            'delegatePublicKey': this.delegatePublicKey,
-                            'delegateVotesTotal': this.delegateVotesTotal,
-                            'delegateRank': this.delegateRank,
-                            'delegateSharePercentage': this.delegateSharePercentage,
-                            'delegatePayoutInterval': this.delegatePayoutInterval
+                            'type': this.wallet.type,
+                            'apiUrl': this.wallet.apiUrl,
+                            'explorerUrl': this.wallet.explorerUrl,
+                            'delegateUsername': this.delegateUsername || 'Unknown',
+                            'delegateAddress': this.delegateAddress || 'Unknown',
+                            'delegatePublicKey': this.delegatePublicKey || 'Unknown',
+                            'delegateVotesTotal': this.delegateVotesTotal || 'Unknown',
+                            'delegateRank': this.delegateRank || 'Unknown',
+                            'delegateSharePercentage': this.delegateSharePercentage || 'Unknown',
+                            'delegatePayoutInterval': this.delegatePayoutInterval || 'Unknown'
                         };
                     } else {
                         this.inactive = true;
-
-                        return {
-                            'id': this.walletAddress.id,
-                            'address': this.walletAddress.address,
-                            'walletBalance': this.walletBalance,
-                            'arkvatarUrl': this.arkvatarUrl,
-                            'type': this.walletAddress.type,
-                            'apiUrl': this.walletAddress.apiUrl,
-                            'explorerUrl': this.walletAddress.explorerUrl,
-                            'delegateUsername': 'Unknown',
-                            'delegateAddress': 'Unknown',
-                            'delegatePublicKey': 'Unknown',
-                            'delegateVotesTotal': 'Unknown',
-                            'delegateRank': 'Unknown',
-                            'delegateSharePercentage': 'Unknown',
-                            'delegatePayoutInterval': 'Unknown'
-                        };
                     }
                 } catch (error) {
                     console.log(error);
@@ -276,7 +250,7 @@
             },
         },
         computed: {
-            dailyCalc: function () {
+            dailyCalc () {
                 if (isNaN(this.delegateSharePercentage)) {
                     return 0;
                 }
@@ -284,25 +258,24 @@
                 return this.walletBalance / this.delegateVotesTotal * 422 * this.delegateSharePercentage / 100;
             },
 
-            weeklyCalc: function () {
+            weeklyCalc () {
                 return this.dailyCalc * 7;
             },
 
-            monthlyCalc: function () {
+            monthlyCalc () {
                 return this.dailyCalc * 30;
             },
 
-            displayCurrencySign: function() {
-                if (this.walletAddress.type === 'Ark') {
-                    return 'Ѧ';
-                }
-
-                if (this.walletAddress.type === 'Qredit') {
-                    return 'XQR';
-                }
+            displayCurrencySign () {
+                const signs = [
+                    {'type': 'Ark', 'sign': 'Ѧ'},
+                    {'type': 'Qredit', 'sign': 'XQR'},
+                ]
+                
+                return signs.find(match => match.type === this.wallet.type).sign;
             },
 
-            showArkvatars() {
+            showArkvatars () {
                 return this.$store.state.showArkvatars;
             }
         }

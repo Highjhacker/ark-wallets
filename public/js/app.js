@@ -2237,7 +2237,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['wallet-address'],
+  props: ['wallet'],
   data: function data() {
     return {
       walletBalance: null,
@@ -2271,35 +2271,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return response;
     },
     formatSharingSchedule: function formatSharingSchedule(value) {
-      if (value === '6 hours') {
-        return 'every 6 hours';
-      }
-
-      if (value === '12 hours') {
-        return 'every 12 hours';
-      }
-
-      if (value === 'a day') {
-        return 'daily';
-      }
-
-      if (value === '2 days') {
-        return '2 days';
-      }
-
-      if (value === '3 days') {
-        return '3 days';
-      }
-
-      if (value === '5 days') {
-        return '5 days';
-      }
-
-      if (value === '7 days') {
-        return 'weekly';
-      } else {
-        return 'unknown';
-      }
+      return value === 'a few seconds' ? 'unknown' : value;
     }
   },
   mounted: function () {
@@ -2314,7 +2286,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return this.findInLocalStorage(this.walletAddress.address);
+              return this.findInLocalStorage(this.wallet.address);
 
             case 2:
               wallet = _context.sent;
@@ -2358,24 +2330,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _findInLocalStorage = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(address) {
-        var existing, filtered;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                existing = localStorage.getItem("addresses");
-                existing = existing ? JSON.parse(existing) : [];
-                filtered = existing.filter(function (el) {
-                  return el.address === address;
-                });
-                return _context2.abrupt("return", filtered[0]);
+                return _context2.abrupt("return", this.$store.getters.walletByAddress(address));
 
-              case 4:
+              case 1:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2);
+        }, _callee2, this);
       }));
 
       function findInLocalStorage(_x) {
@@ -2387,7 +2353,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     updateCard: function () {
       var _updateCard = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(walletAddress) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(address) {
         var existing, filtered, walletData;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
@@ -2395,20 +2361,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 existing = localStorage.getItem("addresses");
                 existing = existing ? JSON.parse(existing) : [];
-                filtered = existing.filter(function (el) {
-                  return el.address !== walletAddress.address;
+                filtered = existing.filter(function (wallet) {
+                  return wallet.address !== address;
                 });
-                _context3.next = 5;
+                console.log(filtered);
+                _context3.next = 6;
                 return this.getDataFromAddress();
 
-              case 5:
+              case 6:
                 walletData = _context3.sent;
                 filtered.push(walletData);
                 localStorage.setItem("addresses", JSON.stringify(filtered));
-                _context3.next = 10;
+                _context3.next = 11;
                 return this.makeToast("Wallet Updated", "check-circle", "success");
 
-              case 10:
+              case 11:
               case "end":
                 return _context3.stop();
             }
@@ -2425,7 +2392,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     removeCard: function () {
       var _removeCard = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(walletAddress) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(address) {
         var existing, filtered;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
@@ -2433,8 +2400,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 existing = localStorage.getItem("addresses");
                 existing = existing ? JSON.parse(existing) : [];
-                filtered = existing.filter(function (el) {
-                  return el.address !== walletAddress.address;
+                filtered = existing.filter(function (wallet) {
+                  return wallet.address !== address;
                 });
                 localStorage.setItem("addresses", JSON.stringify(filtered));
                 this.deleted = true;
@@ -2465,7 +2432,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context5.prev = _context5.next) {
               case 0:
                 _context5.next = 2;
-                return axios.get("".concat(this.walletAddress.apiUrl, "wallets/").concat(this.walletAddress.address));
+                return axios.get("".concat(this.wallet.apiUrl, "wallets/").concat(this.wallet.address));
 
               case 2:
                 request = _context5.sent;
@@ -2495,7 +2462,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context6.prev = _context6.next) {
               case 0:
                 _context6.next = 2;
-                return axios.get("".concat(this.walletAddress.apiUrl, "wallets/").concat(this.walletAddress.address));
+                return axios.get("".concat(this.wallet.apiUrl, "wallets/").concat(this.wallet.address));
 
               case 2:
                 request = _context6.sent;
@@ -2618,7 +2585,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 }
 
                 _context10.next = 10;
-                return this.getDelegateData(this.walletAddress.apiUrl, this.delegatePublicKey);
+                return this.getDelegateData(this.wallet.apiUrl, this.delegatePublicKey);
 
               case 10:
                 walletDelegate = _context10.sent;
@@ -2628,14 +2595,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 this.delegateAddress = walletDelegate.data.data.address; // Get the delegate sharing information
 
                 _context10.next = 17;
-                return this.getDelegateShare(this.walletAddress.type, walletDelegate.data.data.username);
+                return this.getDelegateShare(this.wallet.type, walletDelegate.data.data.username);
 
               case 17:
                 delegateShare = _context10.sent;
                 this.delegateSharePercentage = delegateShare.data.payout_percent;
                 this.delegatePayoutInterval = delegateShare.data.payout_interval;
 
-                if (this.walletAddress.type === 'Ark') {
+                if (this.wallet.type === 'Ark') {
                   this.delegateUsername = delegateShare.data.name;
                 } // Calculate the time difference since last block, if inferior to twelve minutes it's good.
 
@@ -2653,57 +2620,41 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 27:
                 return _context10.abrupt("return", {
-                  'id': this.walletAddress.id,
-                  'address': this.walletAddress.address,
+                  'id': this.wallet.id,
+                  'address': this.wallet.address,
                   'walletBalance': this.walletBalance,
                   'arkvatarUrl': this.arkvatarUrl,
-                  'type': this.walletAddress.type,
-                  'apiUrl': this.walletAddress.apiUrl,
-                  'explorerUrl': this.walletAddress.explorerUrl,
-                  'delegateUsername': this.delegateUsername,
-                  'delegateAddress': this.delegateAddress,
-                  'delegatePublicKey': this.delegatePublicKey,
-                  'delegateVotesTotal': this.delegateVotesTotal,
-                  'delegateRank': this.delegateRank,
-                  'delegateSharePercentage': this.delegateSharePercentage,
-                  'delegatePayoutInterval': this.delegatePayoutInterval
+                  'type': this.wallet.type,
+                  'apiUrl': this.wallet.apiUrl,
+                  'explorerUrl': this.wallet.explorerUrl,
+                  'delegateUsername': this.delegateUsername || 'Unknown',
+                  'delegateAddress': this.delegateAddress || 'Unknown',
+                  'delegatePublicKey': this.delegatePublicKey || 'Unknown',
+                  'delegateVotesTotal': this.delegateVotesTotal || 'Unknown',
+                  'delegateRank': this.delegateRank || 'Unknown',
+                  'delegateSharePercentage': this.delegateSharePercentage || 'Unknown',
+                  'delegatePayoutInterval': this.delegatePayoutInterval || 'Unknown'
                 });
 
               case 30:
                 this.inactive = true;
-                return _context10.abrupt("return", {
-                  'id': this.walletAddress.id,
-                  'address': this.walletAddress.address,
-                  'walletBalance': this.walletBalance,
-                  'arkvatarUrl': this.arkvatarUrl,
-                  'type': this.walletAddress.type,
-                  'apiUrl': this.walletAddress.apiUrl,
-                  'explorerUrl': this.walletAddress.explorerUrl,
-                  'delegateUsername': 'Unknown',
-                  'delegateAddress': 'Unknown',
-                  'delegatePublicKey': 'Unknown',
-                  'delegateVotesTotal': 'Unknown',
-                  'delegateRank': 'Unknown',
-                  'delegateSharePercentage': 'Unknown',
-                  'delegatePayoutInterval': 'Unknown'
-                });
 
-              case 32:
-                _context10.next = 38;
+              case 31:
+                _context10.next = 37;
                 break;
 
-              case 34:
-                _context10.prev = 34;
+              case 33:
+                _context10.prev = 33;
                 _context10.t0 = _context10["catch"](0);
                 console.log(_context10.t0);
                 console.log("Failed to fetch data.");
 
-              case 38:
+              case 37:
               case "end":
                 return _context10.stop();
             }
           }
-        }, _callee10, this, [[0, 34]]);
+        }, _callee10, this, [[0, 33]]);
       }));
 
       function getDataFromAddress() {
@@ -2728,13 +2679,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return this.dailyCalc * 30;
     },
     displayCurrencySign: function displayCurrencySign() {
-      if (this.walletAddress.type === 'Ark') {
-        return 'Ѧ';
-      }
+      var _this2 = this;
 
-      if (this.walletAddress.type === 'Qredit') {
-        return 'XQR';
-      }
+      var signs = [{
+        'type': 'Ark',
+        'sign': 'Ѧ'
+      }, {
+        'type': 'Qredit',
+        'sign': 'XQR'
+      }];
+      return signs.find(function (match) {
+        return match.type === _this2.wallet.type;
+      }).sign;
     },
     showArkvatars: function showArkvatars() {
       return this.$store.state.showArkvatars;
@@ -44038,14 +43994,14 @@ var render = function() {
                   {
                     name: "tooltip",
                     rawName: "v-tooltip.top",
-                    value: _vm.walletAddress.address,
-                    expression: "walletAddress.address",
+                    value: _vm.wallet.address,
+                    expression: "wallet.address",
                     modifiers: { top: true }
                   }
                 ],
                 staticClass: "block h-auto w-full",
                 class: { "opacity-50": _vm.inactive },
-                attrs: { alt: _vm.walletAddress.address, src: _vm.arkvatarUrl }
+                attrs: { alt: _vm.wallet.address, src: _vm.arkvatarUrl }
               })
             ])
           : _vm._e(),
@@ -44091,7 +44047,7 @@ var render = function() {
                 "p",
                 {
                   staticClass:
-                    "flex items-center no-underline text-black text-sm"
+                    "flex items-center no-underline text-black text-sm has-tooltip"
                 },
                 [
                   _vm._v(
@@ -44234,7 +44190,7 @@ var render = function() {
                       "bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded mx-1 md:mb-2",
                     on: {
                       click: function($event) {
-                        return _vm.removeCard(_vm.walletAddress)
+                        return _vm.removeCard(_vm.wallet.address)
                       }
                     }
                   },
@@ -44246,9 +44202,7 @@ var render = function() {
                   {
                     attrs: {
                       href:
-                        _vm.walletAddress.explorerUrl +
-                        "wallets/" +
-                        _vm.walletAddress.address
+                        _vm.wallet.explorerUrl + "wallets/" + _vm.wallet.address
                     }
                   },
                   [
@@ -44306,7 +44260,7 @@ var render = function() {
                       "bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 md:mb-2",
                     on: {
                       click: function($event) {
-                        return _vm.updateCard(_vm.walletAddress)
+                        return _vm.updateCard(_vm.wallet.address)
                       }
                     }
                   },
@@ -44515,7 +44469,7 @@ var render = function() {
       _vm._l(_vm.orderedWallets, function(wallet) {
         return _c("wallet-card-component", {
           key: wallet.id,
-          attrs: { "wallet-address": wallet }
+          attrs: { wallet: wallet }
         })
       }),
       _vm._v(" "),
@@ -66421,6 +66375,13 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_0__["default"].Store({
     }
   },
   getters: {
+    walletByAddress: function walletByAddress(state) {
+      return function (address) {
+        return state.wallets.filter(function (item) {
+          return item.address === address;
+        })[0];
+      };
+    },
     wallets: function wallets(state) {
       return state.wallets;
     },
