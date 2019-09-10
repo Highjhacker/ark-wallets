@@ -1,9 +1,10 @@
 import merge from 'lodash/merge'
 
 const mixins = [
-    require('./toast').default,
+    require('./arkvatar').default,
+    require('./blockchain').default,
     require('./clipboard').default,
-    require('./delegates').default
+    require('./toast').default,
 ];
 
 export default merge(...mixins)
