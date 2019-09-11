@@ -1,15 +1,19 @@
 <template>
-    <div class="flex flex-wrap -mx-1 lg:-mx-4">
-        <wallet-card-component v-for="wallet in orderedWallets" :key="wallet.id" :wallet="wallet"></wallet-card-component>
-        <fab
-                :position="position"
-                :bg-color="bgColor"
-                :actions="fabActions"
-                @exportWallets="exportWallets"
-                @importWallets="importWallets"
-                @clearAll="clearAll"
-        ></fab>
-    </div>
+  <div class="flex flex-wrap -mx-1 lg:-mx-4">
+    <wallet-card-component 
+      v-for="wallet in orderedWallets" 
+      :key="wallet.id" 
+      :wallet="wallet" 
+    />
+    <fab
+      :position="position"
+      :bg-color="bgColor"
+      :actions="fabActions"
+      @exportWallets="exportWallets"
+      @importWallets="importWallets"
+      @clearAll="clearAll"
+    />
+  </div>
 </template>
 
 <script>
@@ -45,6 +49,12 @@
             }
         },
 
+        computed: {
+            orderedWallets: function () {
+                return _.orderBy(this.$store.getters.wallets, 'id');
+            }
+        },
+
         methods: {
             async importWallets() {
                 this.$store.commit('handleImportModal');
@@ -60,12 +70,6 @@
                 this.$store.commit('clearWallets');
 
                 await this.makeToast("Successfully deleted all wallets !", "check-circle", "success");
-            }
-        },
-        
-        computed: {
-            orderedWallets: function () {
-                return _.orderBy(this.$store.getters.wallets, 'id');
             }
         }
     }

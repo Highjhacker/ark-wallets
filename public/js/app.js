@@ -1936,7 +1936,6 @@ module.exports = function isBuffer (obj) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vue_loading_spinner__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-loading-spinner */ "./node_modules/vue-loading-spinner/src/index.js");
 
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -1982,16 +1981,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  components: {
-    Pencil: vue_loading_spinner__WEBPACK_IMPORTED_MODULE_1__["Pencil"]
-  },
   data: function data() {
     return {
       walletsJson: null,
       loading: false
     };
+  },
+  computed: {
+    showImportModal: function showImportModal() {
+      return this.$store.getters.importModal;
+    }
   },
   methods: {
     close: function () {
@@ -2141,7 +2159,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   break;
                 }
 
-                if (!validatedInput.hasOwnProperty('meta')) {
+                if (!Object.prototype.hasOwnProperty.call(validatedInput, 'meta')) {
                   _context4.next = 43;
                   break;
                 }
@@ -2313,11 +2331,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return submit;
     }()
-  },
-  computed: {
-    showImportModal: function showImportModal() {
-      return this.$store.getters.importModal;
-    }
   }
 });
 
@@ -2362,7 +2375,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  computed: {
+    showArkvatars: function showArkvatars() {
+      return this.$store.getters.arkvatars;
+    }
+  },
   methods: {
     change: function () {
       var _change = _asyncToGenerator(
@@ -2388,11 +2410,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return change;
     }()
-  },
-  computed: {
-    showArkvatars: function showArkvatars() {
-      return this.$store.getters.arkvatars;
-    }
   }
 });
 
@@ -2487,25 +2504,41 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['wallet'],
-  data: function data() {
-    return {
-      walletBalance: null,
-      delegatePublicKey: null,
-      delegateUsername: null,
-      delegateAddress: null,
-      delegateVotesTotal: null,
-      delegateRank: null,
-      delegateSharePercentage: null,
-      delegatePayoutInterval: null,
-      delegateIsForging: null,
-      delegateIsActive: null,
-      delegateIsGreen: null,
-      arkvatarUrl: null,
-      inactive: false
-    };
-  },
   filters: {
     currencyDecimal: function currencyDecimal(value) {
       return value.toFixed(2);
@@ -2524,11 +2557,66 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return value === 'a few seconds' ? 'unknown' : value;
     }
   },
+  props: {
+    wallet: {
+      type: Object,
+      "default": null
+    }
+  },
+  data: function data() {
+    return {
+      walletBalance: null,
+      delegatePublicKey: null,
+      delegateUsername: null,
+      delegateAddress: null,
+      delegateVotesTotal: null,
+      delegateRank: null,
+      delegateSharePercentage: null,
+      delegatePayoutInterval: null,
+      delegateIsForging: null,
+      delegateIsActive: null,
+      delegateIsGreen: null,
+      arkvatarUrl: null,
+      inactive: false
+    };
+  },
+  computed: {
+    dailyCalc: function dailyCalc() {
+      if (isNaN(this.delegateSharePercentage)) {
+        return 0;
+      }
+
+      return this.walletBalance / this.delegateVotesTotal * 422 * this.delegateSharePercentage / 100;
+    },
+    weeklyCalc: function weeklyCalc() {
+      return this.dailyCalc * 7;
+    },
+    monthlyCalc: function monthlyCalc() {
+      return this.dailyCalc * 30;
+    },
+    displayCurrencySign: function displayCurrencySign() {
+      var _this = this;
+
+      var signs = [{
+        'type': 'Ark',
+        'sign': 'Ѧ'
+      }, {
+        'type': 'Qredit',
+        'sign': 'XQR'
+      }];
+      return signs.find(function (match) {
+        return match.type === _this.wallet.type;
+      }).sign;
+    },
+    showArkvatars: function showArkvatars() {
+      return this.$store.getters.arkvatars;
+    }
+  },
   mounted: function () {
     var _mounted = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-      var _this = this;
+      var _this2 = this;
 
       var wallet;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
@@ -2558,7 +2646,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 6:
               setInterval(function () {
-                _this.isDelegateGreen();
+                _this2.isDelegateGreen();
               }, 60000);
 
             case 7:
@@ -2665,13 +2753,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _isDelegateActive = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
+        var delegateCap;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                return _context5.abrupt("return", this.delegateRank <= 51 ? this.delegateIsActive = true : this.delegateIsActive = false);
+                _context5.next = 2;
+                return this.getDelegateCapForType(this.wallet.type);
 
-              case 1:
+              case 2:
+                delegateCap = _context5.sent;
+                return _context5.abrupt("return", this.delegateRank <= delegateCap.amount ? this.delegateIsActive = true : this.delegateIsActive = false);
+
+              case 4:
               case "end":
                 return _context5.stop();
             }
@@ -2840,38 +2934,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return getDataFromAddress;
     }()
-  },
-  computed: {
-    dailyCalc: function dailyCalc() {
-      if (isNaN(this.delegateSharePercentage)) {
-        return 0;
-      }
-
-      return this.walletBalance / this.delegateVotesTotal * 422 * this.delegateSharePercentage / 100;
-    },
-    weeklyCalc: function weeklyCalc() {
-      return this.dailyCalc * 7;
-    },
-    monthlyCalc: function monthlyCalc() {
-      return this.dailyCalc * 30;
-    },
-    displayCurrencySign: function displayCurrencySign() {
-      var _this2 = this;
-
-      var signs = [{
-        'type': 'Ark',
-        'sign': 'Ѧ'
-      }, {
-        'type': 'Qredit',
-        'sign': 'XQR'
-      }];
-      return signs.find(function (match) {
-        return match.type === _this2.wallet.type;
-      }).sign;
-    },
-    showArkvatars: function showArkvatars() {
-      return this.$store.getters.arkvatars;
-    }
   }
 });
 
@@ -2895,6 +2957,34 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3118,8 +3208,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 52:
                 _context2.prev = 52;
                 _context2.t0 = _context2["catch"](0);
+                return _context2.abrupt("return");
 
-              case 54:
+              case 55:
               case "end":
                 return _context2.stop();
             }
@@ -3171,6 +3262,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -3197,6 +3292,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         color: '#FF4136'
       }]
     };
+  },
+  computed: {
+    orderedWallets: function orderedWallets() {
+      return _.orderBy(this.$store.getters.wallets, 'id');
+    }
   },
   methods: {
     importWallets: function () {
@@ -3275,11 +3375,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return clearAll;
     }()
-  },
-  computed: {
-    orderedWallets: function orderedWallets() {
-      return _.orderBy(this.$store.getters.wallets, 'id');
-    }
   }
 });
 
@@ -48716,11 +48811,13 @@ var render = function() {
               },
               [
                 _c("h2", { staticClass: "text-xl font-bold text-gray-900" }, [
-                  _vm._v("Import Wallets from JSON")
+                  _vm._v("\n        Import Wallets from JSON\n      ")
                 ]),
                 _vm._v(" "),
                 _c("p", { staticClass: "mb-6" }, [
-                  _vm._v("Paste your JSON here to import wallets.")
+                  _vm._v(
+                    "\n        Paste your JSON here to import wallets.\n      "
+                  )
                 ]),
                 _vm._v(" "),
                 _c("form", [
@@ -48759,11 +48856,7 @@ var render = function() {
                               attrs: { type: "button" },
                               on: { click: _vm.submit }
                             },
-                            [
-                              _vm._v(
-                                "\n                        Import\n                    "
-                              )
-                            ]
+                            [_vm._v("\n            Import\n          ")]
                           )
                         : _vm._e(),
                       _vm._v(" "),
@@ -48775,11 +48868,7 @@ var render = function() {
                                 "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 w-40 rounded focus:outline-none focus:shadow-outline opacity-50",
                               attrs: { type: "button" }
                             },
-                            [
-                              _vm._v(
-                                "\n                        Importing...\n                    "
-                              )
-                            ]
+                            [_vm._v("\n            Importing...\n          ")]
                           )
                         : _vm._e()
                     ]
@@ -48797,7 +48886,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("\n                    Close\n                ")]
+                    [_vm._v("\n          Close\n        ")]
                   )
                 ])
               ]
@@ -48838,8 +48927,8 @@ var render = function() {
     [
       _c(
         "a",
-        { staticClass: "font-bold text-2xl lg:text-4xl", attrs: { href: "#" } },
-        [_vm._v("\n        ArkWallets\n    ")]
+        { staticClass: "font-bold text-2xl lg:text-4xl", attrs: { href: "/" } },
+        [_vm._v("\n    ArkWallets\n  ")]
       ),
       _vm._v(" "),
       _c("div", { staticClass: "lg:block" }, [
@@ -48929,9 +49018,7 @@ var render = function() {
             _c("h1", { staticClass: "text-lg" }, [
               _c("p", { staticClass: "no-underline text-black" }, [
                 _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.delegateUsername) +
-                    "\n                "
+                  "\n          " + _vm._s(_vm.delegateUsername) + "\n        "
                 )
               ]),
               _vm._v(" "),
@@ -48943,7 +49030,7 @@ var render = function() {
                 },
                 [
                   _vm._v(
-                    "\n                    " +
+                    "\n          " +
                       _vm._s(
                         _vm._f("currencyDecimal")(
                           _vm._f("formatArktoshis")(_vm.walletBalance, false)
@@ -48951,7 +49038,7 @@ var render = function() {
                       ) +
                       " " +
                       _vm._s(_vm.displayCurrencySign) +
-                      "\n                "
+                      "\n        "
                   )
                 ]
               ),
@@ -48964,7 +49051,7 @@ var render = function() {
                 },
                 [
                   _vm._v(
-                    "\n                    " +
+                    "\n          " +
                       _vm._s(_vm._f("currencyDecimal")(_vm.dailyCalc)) +
                       " " +
                       _vm._s(_vm.displayCurrencySign) +
@@ -48981,7 +49068,7 @@ var render = function() {
                           )
                         )
                       ) +
-                      "\n                "
+                      "\n        "
                   )
                 ]
               )
@@ -49139,23 +49226,7 @@ var render = function() {
                   ]
                 ),
                 _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    directives: [
-                      {
-                        name: "tooltip",
-                        rawName: "v-tooltip.bottom",
-                        value: "Payouts History",
-                        expression: "'Payouts History'",
-                        modifiers: { bottom: true }
-                      }
-                    ],
-                    staticClass:
-                      "bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 opacity-50 cursor-not-allowed md:mb-2"
-                  },
-                  [_c("i", { staticClass: "fas fa-history" })]
-                ),
+                _vm._m(0),
                 _vm._v(" "),
                 _c(
                   "button",
@@ -49187,7 +49258,22 @@ var render = function() {
     ]
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass:
+          "bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 opacity-50 cursor-not-allowed md:mb-2",
+        attrs: { "tooltip.bottom": "'Payouts History'" }
+      },
+      [_c("i", { staticClass: "fas fa-history" })]
+    )
+  }
+]
 render._withStripped = true
 
 
@@ -49332,7 +49418,7 @@ var render = function() {
                       "hover:bg-blue-custom bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16",
                     attrs: { type: "submit" }
                   },
-                  [_vm._v("\n                Add Wallet\n            ")]
+                  [_vm._v("\n          Add Wallet\n        ")]
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -71594,9 +71680,11 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_0__["default"].Store({
     },
     wallet: function wallet(state) {
       return function (address) {
-        return state.wallets.filter(function (item) {
-          return item.address === address;
-        })[0];
+        if (state.wallets.length > 0) {
+          return state.wallets.filter(function (item) {
+            return item.address === address;
+          })[0];
+        }
       };
     },
     wallets: function wallets(state) {
@@ -71621,17 +71709,6 @@ var app = new Vue({
 
 window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /**
- * We'll load jQuery and the Bootstrap jQuery plugin which provides support
- * for JavaScript based Bootstrap features such as modals and tabs. This
- * code may be modified to fit the specific needs of your application.
- */
-// try {
-//     window.Popper = require('popper.js').default;
-//     window.$ = window.jQuery = require('jquery');
-//     require('bootstrap');
-// } catch (e) {}
-
-/**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the
  * CSRF token as a header based on the value of the "XSRF" token cookie.
@@ -71652,19 +71729,6 @@ if (token) {
 } else {
   console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allows your team to easily build robust real-time web applications.
- */
-// import Echo from 'laravel-echo'
-// window.Pusher = require('pusher-js');
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: process.env.MIX_PUSHER_APP_KEY,
-//     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-//     encrypted: true
-// });
 
 /***/ }),
 
@@ -72295,23 +72359,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return getExplorerForType;
     }(),
-    getApiForType: function () {
-      var _getApiForType = _asyncToGenerator(
+    getDelegateCapForType: function () {
+      var _getDelegateCapForType = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(type) {
-        var apis;
+        var chains;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                apis = [{
+                chains = [{
                   'type': 'Ark',
-                  'url': 'https://api.ark.land/api/'
+                  'amount': 51
                 }, {
                   'type': 'Qredit',
-                  'url': 'https://api.qreditnode.com/api/'
+                  'amount': 51
                 }];
-                return _context5.abrupt("return", apis.find(function (match) {
+                return _context5.abrupt("return", chains.find(function (match) {
                   return match.type === type;
                 }));
 
@@ -72323,7 +72387,41 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee5);
       }));
 
-      function getApiForType(_x8) {
+      function getDelegateCapForType(_x8) {
+        return _getDelegateCapForType.apply(this, arguments);
+      }
+
+      return getDelegateCapForType;
+    }(),
+    getApiForType: function () {
+      var _getApiForType = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6(type) {
+        var apis;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                apis = [{
+                  'type': 'Ark',
+                  'url': 'https://api.ark.land/api/'
+                }, {
+                  'type': 'Qredit',
+                  'url': 'https://api.qreditnode.com/api/'
+                }];
+                return _context6.abrupt("return", apis.find(function (match) {
+                  return match.type === type;
+                }));
+
+              case 2:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6);
+      }));
+
+      function getApiForType(_x9) {
         return _getApiForType.apply(this, arguments);
       }
 
@@ -72332,43 +72430,43 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     queryApi: function () {
       var _queryApi = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6(type, address) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee7(type, address) {
         var api;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee7$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
-                _context6.prev = 0;
-                _context6.next = 3;
+                _context7.prev = 0;
+                _context7.next = 3;
                 return this.getApiForType(type);
 
               case 3:
-                api = _context6.sent;
-                _context6.next = 6;
+                api = _context7.sent;
+                _context7.next = 6;
                 return axios.get("".concat(api.url, "wallets/").concat(address));
 
               case 6:
-                return _context6.abrupt("return", _context6.sent);
+                return _context7.abrupt("return", _context7.sent);
 
               case 9:
-                _context6.prev = 9;
-                _context6.t0 = _context6["catch"](0);
+                _context7.prev = 9;
+                _context7.t0 = _context7["catch"](0);
                 this.isProcessing = false;
-                _context6.next = 14;
+                _context7.next = 14;
                 return this.makeToast("Invalid type for the submitted Cryptocurrency.", "exclamation-triangle", "error");
 
               case 14:
-                return _context6.abrupt("return", _context6.sent);
+                return _context7.abrupt("return", _context7.sent);
 
               case 15:
               case "end":
-                return _context6.stop();
+                return _context7.stop();
             }
           }
-        }, _callee6, this, [[0, 9]]);
+        }, _callee7, this, [[0, 9]]);
       }));
 
-      function queryApi(_x9, _x10) {
+      function queryApi(_x10, _x11) {
         return _queryApi.apply(this, arguments);
       }
 

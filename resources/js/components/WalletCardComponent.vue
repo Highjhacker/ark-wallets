@@ -1,70 +1,131 @@
 <template>
-    <!-- Column -->
-    <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4 py-4">
-        <!-- Article -->
-        <article class="overflow-hidden rounded-lg shadow-lg">
-            <a v-if="showArkvatars">
-                <img :alt="wallet.address" :class="{'opacity-50': inactive}" class="block h-auto w-full" :src="arkvatarUrl" v-tooltip.top="wallet.address">
-            </a>
-            <header class="flex items-center justify-between leading-tight p-2 md:p-4">
-                <h1 class="text-lg">
-                    <p class="no-underline text-black">
-                        {{ delegateUsername }}
-                    </p>
-                    <p class="flex items-center no-underline text-black text-sm">
-                        {{ walletBalance | formatArktoshis(false) | currencyDecimal }} {{ displayCurrencySign }}
-                    </p>
-                    <p class="flex items-center no-underline text-black text-sm has-tooltip">
-                        {{ dailyCalc | currencyDecimal }} {{ displayCurrencySign }} daily <br /> {{ [delegatePayoutInterval, 'hours'] | duration('humanize') | formatSharingSchedule }}
-                    </p>
-                </h1>
-                <p class="text-grey-darker text-sm" v-show="delegateIsGreen">
-                    <i class="fas fa-check-circle mx-auto has-tooltip" v-tooltip.bottom="'Forging'"></i>
-                </p>
+  <!-- Column -->
+  <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4 py-4">
+    <!-- Article -->
+    <article class="overflow-hidden rounded-lg shadow-lg">
+      <a v-if="showArkvatars">
+        <img
+          v-tooltip.top="wallet.address" 
+          :alt="wallet.address" 
+          :class="{'opacity-50': inactive}" 
+          class="block h-auto w-full" 
+          :src="arkvatarUrl" 
+        >
+      </a>
+      <header class="flex items-center justify-between leading-tight p-2 md:p-4">
+        <h1 class="text-lg">
+          <p class="no-underline text-black">
+            {{ delegateUsername }}
+          </p>
+          <p class="flex items-center no-underline text-black text-sm">
+            {{ walletBalance | formatArktoshis(false) | currencyDecimal }} {{ displayCurrencySign }}
+          </p>
+          <p class="flex items-center no-underline text-black text-sm has-tooltip">
+            {{ dailyCalc | currencyDecimal }} {{ displayCurrencySign }} daily <br> {{ [delegatePayoutInterval, 'hours'] | duration('humanize') | formatSharingSchedule }}
+          </p>
+        </h1>
+        <p 
+          v-show="delegateIsGreen"
+          class="text-grey-darker text-sm" 
+        >
+          <i 
+            v-tooltip.bottom="'Forging'" 
+            class="fas fa-check-circle mx-auto has-tooltip" 
+          />
+        </p>
 
-                <p class="text-grey-darker text-sm" v-show="!delegateIsGreen && delegateIsGreen != null">
-                    <i class="fas fa-times-circle mx-auto has-tooltip" v-tooltip.bottom="'Not Forging'"></i>
-                </p>
+        <p 
+          v-show="!delegateIsGreen && delegateIsGreen != null"
+          class="text-grey-darker text-sm"
+        >
+          <i 
+            v-tooltip.bottom="'Not Forging'" 
+            class="fas fa-times-circle mx-auto has-tooltip" 
+          />
+        </p>
 
-                <p class="text-grey-darker text-sm" v-show="delegateIsGreen == null">
-                    <i class="fas fa-question-circle mx-auto has-tooltip" v-tooltip.bottom="'Unknown'"></i>
-                </p>
-            </header>
+        <p
+          v-show="delegateIsGreen == null" 
+          class="text-grey-darker text-sm"
+        >
+          <i 
+            v-tooltip.bottom="'Unknown'" 
+            class="fas fa-question-circle mx-auto has-tooltip" 
+          />
+        </p>
+      </header>
 
-            <footer class="flex items-center justify-between leading-none p-2 md:p-4">
-                <div class="md:flex-wrap inline-flex content-between">
-                    <button v-on:click="removeCard(wallet.address)" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded mx-1 md:mb-2"
-                            v-tooltip.bottom="'Remove Wallet'">
-                        <i class="far fa-trash-alt"></i>
-                    </button>
+      <footer class="flex items-center justify-between leading-none p-2 md:p-4">
+        <div class="md:flex-wrap inline-flex content-between">
+          <button
+            v-tooltip.bottom="'Remove Wallet'"
+            class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded mx-1 md:mb-2"
+            @click="removeCard(wallet.address)" 
+          >
+            <i class="far fa-trash-alt" />
+          </button>
 
-                    <a v-bind:href="`${wallet.explorerUrl}wallets/${wallet.address}`">
-                        <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded mx-1 md:mb-2"
-                                v-tooltip.bottom="'See on Explorer'">
-                            <i class="fas fa-link"></i>
-                        </button>
-                    </a>
+          <a :href="`${wallet.explorerUrl}wallets/${wallet.address}`">
+            <button 
+              v-tooltip.bottom="'See on Explorer'"
+              class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded mx-1 md:mb-2"
+            >
+              <i class="fas fa-link" />
+            </button>
+          </a>
 
-                    <button class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 opacity-50 cursor-not-allowed md:mb-2"
-                            v-tooltip.bottom="'Payouts History'">
-                        <i class="fas fa-history"></i>
-                    </button>
+          <button 
+            tooltip.bottom="'Payouts History'"
+            class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 opacity-50 cursor-not-allowed md:mb-2"
+          >
+            <i class="fas fa-history" />
+          </button>
 
-                    <button v-on:click="updateCard(wallet.address)" class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 md:mb-2"
-                            v-tooltip.bottom="'Refresh Wallet'">
-                        <i class="fas fa-sync"></i>
-                    </button>
-                </div>
-            </footer>
-        </article>
-        <!-- END Article -->
-    </div>
-    <!-- END Column -->
+          <button 
+            v-tooltip.bottom="'Refresh Wallet'"
+            class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded mx-1 md:mb-2"
+            @click="updateCard(wallet.address)"
+          >
+            <i class="fas fa-sync" />
+          </button>
+        </div>
+      </footer>
+    </article>
+    <!-- END Article -->
+  </div>
+  <!-- END Column -->
 </template>
 
 <script>
     export default {
-        props:['wallet'],
+      filters: {
+            currencyDecimal(value) {
+                return value.toFixed(2)
+            },
+
+            countDecimals(value) {
+                if (value % 1 != 0) return value.toString().split(".")[1].length;
+                return 0;
+            },
+
+            formatArktoshis(value, rounded = false) {
+                let normalized = value / 1e8;
+                let response = rounded ? Math.round(normalized) : normalized;
+
+                return response;
+            },
+
+            formatSharingSchedule(value) {
+                return value === 'a few seconds' ? 'unknown' : value;
+            },
+        },
+
+        props: {
+          wallet: {
+            type: Object,
+            default: null
+          }
+        },
 
         data() {
             return {
@@ -86,26 +147,35 @@
             }
         },
 
-        filters: {
-            currencyDecimal(value) {
-                return value.toFixed(2)
+        computed: {
+            dailyCalc () {
+                if (isNaN(this.delegateSharePercentage)) {
+                    return 0;
+                }
+
+                return this.walletBalance / this.delegateVotesTotal * 422 * this.delegateSharePercentage / 100;
             },
 
-            countDecimals(value) {
-                if (value % 1 != 0) return value.toString().split(".")[1].length;
-                return 0;
+            weeklyCalc () {
+                return this.dailyCalc * 7;
             },
 
-            formatArktoshis(value, rounded = false) {
-                let normalized = value / 1e8;
-                let response = rounded ? Math.round(normalized) : normalized;
-
-                return response;
+            monthlyCalc () {
+                return this.dailyCalc * 30;
             },
 
-            formatSharingSchedule(value) {
-                return value === 'a few seconds' ? 'unknown' : value;
+            displayCurrencySign () {
+                const signs = [
+                    {'type': 'Ark', 'sign': 'Ѧ'},
+                    {'type': 'Qredit', 'sign': 'XQR'},
+                ];
+                
+                return signs.find(match => match.type === this.wallet.type).sign;
             },
+
+            showArkvatars () {
+                return this.$store.getters.arkvatars;
+            }
         },
 
         async mounted() {
@@ -150,7 +220,8 @@
             },
 
             async isDelegateActive() {
-                return (this.delegateRank <= 51 ? this.delegateIsActive = true : this.delegateIsActive = false);
+                const delegateCap = await this.getDelegateCapForType(this.wallet.type);
+                return (this.delegateRank <= delegateCap.amount ? this.delegateIsActive = true : this.delegateIsActive = false);
             },
 
             async isDelegateGreen() {
@@ -168,7 +239,7 @@
                 try {
                     [this.walletBalance, this.delegatePublicKey] = await this.getWalletBalanceAndDelegatePublicKey(this.wallet.apiUrl, this.wallet.address);
 
-                    if(this.delegatePublicKey) {
+                    if (this.delegatePublicKey) {
                         // Fetch information about user's delegate
                         const walletDelegate = await this.getDelegateData(this.wallet.apiUrl, this.delegatePublicKey);
                         this.delegateVotesTotal = walletDelegate.data.data.votes;
@@ -181,7 +252,7 @@
                         this.delegateSharePercentage = delegateShare.data.payout_percent;
                         this.delegatePayoutInterval = delegateShare.data.payout_interval;
 
-                        if(this.wallet.type === 'Ark') {
+                        if (this.wallet.type === 'Ark') {
                             this.delegateUsername = delegateShare.data.name;
                         }
 
@@ -217,36 +288,6 @@
                     console.log("Failed to fetch data.");
                 }
             },
-        },
-        computed: {
-            dailyCalc () {
-                if (isNaN(this.delegateSharePercentage)) {
-                    return 0;
-                }
-
-                return this.walletBalance / this.delegateVotesTotal * 422 * this.delegateSharePercentage / 100;
-            },
-
-            weeklyCalc () {
-                return this.dailyCalc * 7;
-            },
-
-            monthlyCalc () {
-                return this.dailyCalc * 30;
-            },
-
-            displayCurrencySign () {
-                const signs = [
-                    {'type': 'Ark', 'sign': 'Ѧ'},
-                    {'type': 'Qredit', 'sign': 'XQR'},
-                ]
-                
-                return signs.find(match => match.type === this.wallet.type).sign;
-            },
-
-            showArkvatars () {
-                return this.$store.getters.arkvatars;
-            }
         }
     }
 </script>
