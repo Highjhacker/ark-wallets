@@ -3039,38 +3039,53 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _validateAddress = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(address) {
+        var usernameCheck;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.prev = 0;
                 _context.next = 3;
+                return this.validateDelegateUsername(address);
+
+              case 3:
+                usernameCheck = _context.sent;
+
+                if (!usernameCheck) {
+                  _context.next = 6;
+                  break;
+                }
+
+                return _context.abrupt("return", true);
+
+              case 6:
+                _context.next = 8;
                 return axios.get("https://retos.io/api/verify/".concat(address), {}, {
                   headers: {
                     'Content-Type': 'application/json'
                   }
                 });
 
-              case 3:
+              case 8:
                 return _context.abrupt("return", _context.sent);
 
-              case 6:
-                _context.prev = 6;
+              case 11:
+                _context.prev = 11;
                 _context.t0 = _context["catch"](0);
 
                 if (!(_context.t0.response.status === 422)) {
-                  _context.next = 10;
+                  _context.next = 15;
                   break;
                 }
 
                 return _context.abrupt("return", true);
 
-              case 10:
+              case 15:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[0, 6]]);
+        }, _callee, this, [[0, 11]]);
       }));
 
       function validateAddress(_x) {
@@ -3079,107 +3094,151 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return validateAddress;
     }(),
-    validateForm: function () {
-      var _validateForm = _asyncToGenerator(
+    validateDelegateUsername: function () {
+      var _validateDelegateUsername = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
-        var explorer, api, userWalletResponse, delegatePublicKey, delegateData, delegateShareData, walletData;
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(username) {
+        var api, delegatesResponse, filtered;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.prev = 0;
-                this.type = this.selected;
+                _context2.next = 2;
+                return this.getApiForType(this.type);
 
-                if (!(this.walletAddress == null)) {
-                  _context2.next = 6;
+              case 2:
+                api = _context2.sent;
+                _context2.next = 5;
+                return this.getDelegatesUsernames(api.url);
+
+              case 5:
+                delegatesResponse = _context2.sent;
+                filtered = delegatesResponse.data.data.map(function (wallet) {
+                  return wallet.username;
+                });
+
+                if (!filtered.includes(username)) {
+                  _context2.next = 9;
                   break;
                 }
 
-                _context2.next = 5;
+                return _context2.abrupt("return", true);
+
+              case 9:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function validateDelegateUsername(_x2) {
+        return _validateDelegateUsername.apply(this, arguments);
+      }
+
+      return validateDelegateUsername;
+    }(),
+    validateForm: function () {
+      var _validateForm = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+        var explorer, api, userWalletResponse, delegatePublicKey, delegateData, delegateShareData, walletData;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.prev = 0;
+                this.type = this.selected;
+
+                if (!(this.walletAddress == null)) {
+                  _context3.next = 6;
+                  break;
+                }
+
+                _context3.next = 5;
                 return this.makeToast("Can't submit an empty address.", "exclamation-triangle", "error");
 
               case 5:
-                return _context2.abrupt("return", _context2.sent);
+                return _context3.abrupt("return", _context3.sent);
 
               case 6:
                 this.isProcessing = true;
 
                 if (!this.$store.getters.wallet(this.walletAddress)) {
-                  _context2.next = 12;
+                  _context3.next = 12;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context2.next = 11;
+                _context3.next = 11;
                 return this.makeToast("Wallet already monitored.", "exclamation-triangle", "error");
 
               case 11:
-                return _context2.abrupt("return", _context2.sent);
+                return _context3.abrupt("return", _context3.sent);
 
               case 12:
-                _context2.next = 14;
+                _context3.next = 14;
                 return this.validateAddress(this.walletAddress);
 
               case 14:
-                if (_context2.sent) {
-                  _context2.next = 19;
+                if (_context3.sent) {
+                  _context3.next = 19;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context2.next = 18;
+                _context3.next = 18;
                 return this.makeToast("Invalid address.", "exclamation-triangle", "error");
 
               case 18:
-                return _context2.abrupt("return", _context2.sent);
+                return _context3.abrupt("return", _context3.sent);
 
               case 19:
-                _context2.next = 21;
+                _context3.next = 21;
                 return this.getExplorerForType(this.type);
 
               case 21:
-                explorer = _context2.sent;
-                _context2.next = 24;
+                explorer = _context3.sent;
+                _context3.next = 24;
                 return this.getApiForType(this.type);
 
               case 24:
-                api = _context2.sent;
-                _context2.next = 27;
+                api = _context3.sent;
+                _context3.next = 27;
                 return this.queryApi(this.type, this.walletAddress);
 
               case 27:
-                userWalletResponse = _context2.sent;
+                userWalletResponse = _context3.sent;
 
                 if (userWalletResponse.data.data.vote) {
-                  _context2.next = 33;
+                  _context3.next = 33;
                   break;
                 }
 
                 this.isProcessing = false;
-                _context2.next = 32;
+                _context3.next = 32;
                 return this.makeToast("This wallet have no delegate.", "exclamation-triangle", "error");
 
               case 32:
-                return _context2.abrupt("return", _context2.sent);
+                return _context3.abrupt("return", _context3.sent);
 
               case 33:
                 delegatePublicKey = userWalletResponse.data.data.vote;
-                _context2.next = 36;
+                _context3.next = 36;
                 return this.getDelegateData(api.url, delegatePublicKey);
 
               case 36:
-                delegateData = _context2.sent;
-                _context2.next = 39;
+                delegateData = _context3.sent;
+                _context3.next = 39;
                 return this.getDelegateShare(this.type, delegateData.data.data.username);
 
               case 39:
-                delegateShareData = _context2.sent;
-                _context2.next = 42;
+                delegateShareData = _context3.sent;
+                _context3.next = 42;
                 return this.getArkvatar(delegateData.data.data.address);
 
               case 42:
-                this.arkvatarUrl = _context2.sent;
+                this.arkvatarUrl = _context3.sent;
                 this.id = Vue.moment().unix();
                 walletData = {
                   'id': this.id,
@@ -3199,23 +3258,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 };
                 this.$store.dispatch('addWallet', walletData);
                 this.isProcessing = false;
-                _context2.next = 49;
+                _context3.next = 49;
                 return this.makeToast("Wallet added !", "check-circle", "success");
 
               case 49:
-                return _context2.abrupt("return", _context2.sent);
+                return _context3.abrupt("return", _context3.sent);
 
               case 52:
-                _context2.prev = 52;
-                _context2.t0 = _context2["catch"](0);
-                return _context2.abrupt("return");
+                _context3.prev = 52;
+                _context3.t0 = _context3["catch"](0);
+                return _context3.abrupt("return");
 
               case 55:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this, [[0, 52]]);
+        }, _callee3, this, [[0, 52]]);
       }));
 
       function validateForm() {
@@ -72226,16 +72285,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   methods: {
-    getDelegateData: function () {
-      var _getDelegateData = _asyncToGenerator(
+    getDelegatesUsernames: function () {
+      var _getDelegatesUsernames = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(endpoint, publicKey) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(endpoint) {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return axios.get("".concat(endpoint, "delegates/").concat(publicKey));
+                return axios.get("".concat(endpoint, "delegates"));
 
               case 2:
                 return _context.abrupt("return", _context.sent);
@@ -72248,7 +72307,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }));
 
-      function getDelegateData(_x, _x2) {
+      function getDelegatesUsernames(_x) {
+        return _getDelegatesUsernames.apply(this, arguments);
+      }
+
+      return getDelegatesUsernames;
+    }(),
+    getDelegateData: function () {
+      var _getDelegateData = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(endpoint, publicKey) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return axios.get("".concat(endpoint, "delegates/").concat(publicKey));
+
+              case 2:
+                return _context2.abrupt("return", _context2.sent);
+
+              case 3:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      function getDelegateData(_x2, _x3) {
         return _getDelegateData.apply(this, arguments);
       }
 
@@ -72257,24 +72344,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     getDelegateShare: function () {
       var _getDelegateShare = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(type, delegateUsername) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(type, delegateUsername) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 if (!(type === 'Ark')) {
-                  _context2.next = 6;
+                  _context3.next = 6;
                   break;
                 }
 
-                _context2.next = 3;
+                _context3.next = 3;
                 return axios.get('https://cors-anywhere.herokuapp.com/'.concat("https://api.arkdelegates.io/api/delegates/", delegateUsername));
 
               case 3:
-                return _context2.abrupt("return", _context2.sent);
+                return _context3.abrupt("return", _context3.sent);
 
               case 6:
-                return _context2.abrupt("return", {
+                return _context3.abrupt("return", {
                   data: {
                     'payout_percentage': 'Unknown',
                     'payout_interval': 'Unknown'
@@ -72283,13 +72370,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 7:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2);
+        }, _callee3);
       }));
 
-      function getDelegateShare(_x3, _x4) {
+      function getDelegateShare(_x4, _x5) {
         return _getDelegateShare.apply(this, arguments);
       }
 
@@ -72298,28 +72385,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     getWalletBalanceAndDelegatePublicKey: function () {
       var _getWalletBalanceAndDelegatePublicKey = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(endpoint, address) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(endpoint, address) {
         var request;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                _context3.next = 2;
+                _context4.next = 2;
                 return axios.get("".concat(endpoint, "wallets/").concat(address));
 
               case 2:
-                request = _context3.sent;
-                return _context3.abrupt("return", [request.data.data.balance, request.data.data.vote]);
+                request = _context4.sent;
+                return _context4.abrupt("return", [request.data.data.balance, request.data.data.vote]);
 
               case 4:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3);
+        }, _callee4);
       }));
 
-      function getWalletBalanceAndDelegatePublicKey(_x5, _x6) {
+      function getWalletBalanceAndDelegatePublicKey(_x6, _x7) {
         return _getWalletBalanceAndDelegatePublicKey.apply(this, arguments);
       }
 
@@ -72328,11 +72415,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     getExplorerForType: function () {
       var _getExplorerForType = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(type) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(type) {
         var explorers;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 explorers = [{
                   'type': 'Ark',
@@ -72341,41 +72428,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   'type': 'Qredit',
                   'url': 'https://explorer.qredit.io/'
                 }];
-                return _context4.abrupt("return", explorers.find(function (match) {
-                  return match.type === type;
-                }));
-
-              case 2:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4);
-      }));
-
-      function getExplorerForType(_x7) {
-        return _getExplorerForType.apply(this, arguments);
-      }
-
-      return getExplorerForType;
-    }(),
-    getDelegateCapForType: function () {
-      var _getDelegateCapForType = _asyncToGenerator(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(type) {
-        var chains;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                chains = [{
-                  'type': 'Ark',
-                  'amount': 51
-                }, {
-                  'type': 'Qredit',
-                  'amount': 51
-                }];
-                return _context5.abrupt("return", chains.find(function (match) {
+                return _context5.abrupt("return", explorers.find(function (match) {
                   return match.type === type;
                 }));
 
@@ -72387,29 +72440,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee5);
       }));
 
-      function getDelegateCapForType(_x8) {
-        return _getDelegateCapForType.apply(this, arguments);
+      function getExplorerForType(_x8) {
+        return _getExplorerForType.apply(this, arguments);
       }
 
-      return getDelegateCapForType;
+      return getExplorerForType;
     }(),
-    getApiForType: function () {
-      var _getApiForType = _asyncToGenerator(
+    getDelegateCapForType: function () {
+      var _getDelegateCapForType = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6(type) {
-        var apis;
+        var chains;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
-                apis = [{
+                chains = [{
                   'type': 'Ark',
-                  'url': 'https://api.ark.land/api/'
+                  'amount': 51
                 }, {
                   'type': 'Qredit',
-                  'url': 'https://api.qreditnode.com/api/'
+                  'amount': 51
                 }];
-                return _context6.abrupt("return", apis.find(function (match) {
+                return _context6.abrupt("return", chains.find(function (match) {
                   return match.type === type;
                 }));
 
@@ -72421,7 +72474,41 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee6);
       }));
 
-      function getApiForType(_x9) {
+      function getDelegateCapForType(_x9) {
+        return _getDelegateCapForType.apply(this, arguments);
+      }
+
+      return getDelegateCapForType;
+    }(),
+    getApiForType: function () {
+      var _getApiForType = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee7(type) {
+        var apis;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                apis = [{
+                  'type': 'Ark',
+                  'url': 'https://api.ark.land/api/'
+                }, {
+                  'type': 'Qredit',
+                  'url': 'https://api.qreditnode.com/api/'
+                }];
+                return _context7.abrupt("return", apis.find(function (match) {
+                  return match.type === type;
+                }));
+
+              case 2:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee7);
+      }));
+
+      function getApiForType(_x10) {
         return _getApiForType.apply(this, arguments);
       }
 
@@ -72430,43 +72517,43 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     queryApi: function () {
       var _queryApi = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee7(type, address) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee8(type, address) {
         var api;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee7$(_context7) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee8$(_context8) {
           while (1) {
-            switch (_context7.prev = _context7.next) {
+            switch (_context8.prev = _context8.next) {
               case 0:
-                _context7.prev = 0;
-                _context7.next = 3;
+                _context8.prev = 0;
+                _context8.next = 3;
                 return this.getApiForType(type);
 
               case 3:
-                api = _context7.sent;
-                _context7.next = 6;
+                api = _context8.sent;
+                _context8.next = 6;
                 return axios.get("".concat(api.url, "wallets/").concat(address));
 
               case 6:
-                return _context7.abrupt("return", _context7.sent);
+                return _context8.abrupt("return", _context8.sent);
 
               case 9:
-                _context7.prev = 9;
-                _context7.t0 = _context7["catch"](0);
+                _context8.prev = 9;
+                _context8.t0 = _context8["catch"](0);
                 this.isProcessing = false;
-                _context7.next = 14;
+                _context8.next = 14;
                 return this.makeToast("Invalid type for the submitted Cryptocurrency.", "exclamation-triangle", "error");
 
               case 14:
-                return _context7.abrupt("return", _context7.sent);
+                return _context8.abrupt("return", _context8.sent);
 
               case 15:
               case "end":
-                return _context7.stop();
+                return _context8.stop();
             }
           }
-        }, _callee7, this, [[0, 9]]);
+        }, _callee8, this, [[0, 9]]);
       }));
 
-      function queryApi(_x10, _x11) {
+      function queryApi(_x11, _x12) {
         return _queryApi.apply(this, arguments);
       }
 

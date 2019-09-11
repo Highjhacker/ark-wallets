@@ -1,5 +1,9 @@
 export default {
     methods: {
+        async getDelegatesUsernames(endpoint) {
+            return await axios.get(`${endpoint}delegates`);
+        },
+
         async getDelegateData(endpoint, publicKey) {
             return await axios.get(`${endpoint}delegates/${publicKey}`);
         },

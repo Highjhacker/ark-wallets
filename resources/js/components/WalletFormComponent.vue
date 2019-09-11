@@ -82,11 +82,26 @@
         methods: {
             async validateAddress(address) {
                 try {
+                    const usernameCheck = await this.validateDelegateUsername(address);
+                    if (usernameCheck) {
+                        return true;
+                    }
                     return await axios.get(`https://retos.io/api/verify/${address}`, {}, {headers: {'Content-Type': 'application/json'}});
                 } catch (error) {
                     if (error.response.status === 422) {
                         return true;
                     }
+                }
+            },
+
+            async validateDelegateUsername(username) {
+                // Not handling pagination atm, so it only works for delegate on the first page
+                const api = await this.getApiForType(this.type);
+                const delegatesResponse = await this.getDelegatesUsernames(api.url)
+                const filtered = delegatesResponse.data.data.map(wallet => wallet.username);
+                
+                if (filtered.includes(username)) {
+                    return true;
                 }
             },
 
