@@ -1,6 +1,6 @@
 <template>
     <!-- Column -->
-    <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4 py-4" v-show="!deleted">
+    <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/4 py-4">
         <!-- Article -->
         <article class="overflow-hidden rounded-lg shadow-lg">
             <a v-if="showArkvatars">
@@ -80,7 +80,6 @@
                 delegateIsForging: null,
                 delegateIsActive: null,
                 delegateIsGreen: null,
-                deleted: false,
 
                 arkvatarUrl: null,
                 inactive: false,
@@ -110,7 +109,7 @@
         },
 
         async mounted() {
-            let wallet = await this.findInLocalStorage(this.wallet.address);
+            let wallet = await this.findInStore(this.wallet.address);
 
             if (wallet) {
                 this.walletBalance = wallet.walletBalance;
@@ -132,34 +131,20 @@
         },
 
         methods: {
-            async findInLocalStorage(address) {
-                return this.$store.getters.walletByAddress(address);
+            async findInStore(address) {
+                return this.$store.getters.wallet(address);
             },
 
             async updateCard(address) {
-                let existing = localStorage.getItem("addresses");
-                existing = existing ? JSON.parse(existing) : [];
-
-                let filtered = existing.filter(wallet => wallet.address !== address);
-
                 let walletData = await this.getDataFromAddress();
 
-                filtered.push(walletData);
-                
-                localStorage.setItem("addresses", JSON.stringify(filtered));
+                this.$store.dispatch('updateWallet', {address: address, payload: walletData});
 
                 await this.makeToast("Wallet Updated.", "check-circle", "success");
             },
 
             async removeCard(address) {
-                let existing = localStorage.getItem("addresses");
-                existing = existing ? JSON.parse(existing) : [];
-
-                let filtered = existing.filter(wallet => wallet.address !== address);
-
-                localStorage.setItem("addresses", JSON.stringify(filtered));
-
-                this.deleted = true;
+                this.$store.dispatch('deleteWallet', address);
 
                 await this.makeToast("Wallet removed", "check-circle", "success");
             },
@@ -196,7 +181,6 @@
                         this.delegateSharePercentage = delegateShare.data.payout_percent;
                         this.delegatePayoutInterval = delegateShare.data.payout_interval;
 
-                        // Can probably remove that 
                         if(this.wallet.type === 'Ark') {
                             this.delegateUsername = delegateShare.data.name;
                         }
@@ -230,7 +214,6 @@
                         this.inactive = true;
                     }
                 } catch (error) {
-                    console.log(error);
                     console.log("Failed to fetch data.");
                 }
             },
@@ -262,7 +245,7 @@
             },
 
             showArkvatars () {
-                return this.$store.state.showArkvatars;
+                return this.$store.getters.arkvatars;
             }
         }
     }

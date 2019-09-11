@@ -51,22 +51,13 @@
             },
 
             async exportWallets() {
-                let existing = localStorage.getItem("addresses");
-                existing = existing ? JSON.parse(existing) : [];
-
-                this.copyToClipboard(JSON.stringify(existing));
+                this.copyToClipboard(JSON.stringify(this.$store.getters.wallets));
 
                 await this.makeToast("Successfully exported to clipboard !", "check-circle", "success");
             },
 
-            async importLedger() {
-                console.log("Not implemented yet.");
-                await this.makeToast("Not implemented yet.", "times-circle", "error");
-            },
-
             async clearAll() {
                 this.$store.commit('clearWallets');
-                localStorage.clear();
 
                 await this.makeToast("Successfully deleted all wallets !", "check-circle", "success");
             }

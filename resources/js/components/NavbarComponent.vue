@@ -30,7 +30,7 @@
 
         computed: {
             showArkvatars() {
-                return this.$store.state.showArkvatars;
+                return this.$store.getters.arkvatars;
             }
         }
     }
