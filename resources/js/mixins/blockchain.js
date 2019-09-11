@@ -32,6 +32,15 @@ export default {
             return explorers.find(match => match.type === type)
         },
 
+        async getDelegateCapForType(type) {
+            const chains = [
+                { 'type': 'Ark', 'amount': 51 },
+                { 'type': 'Qredit', 'amount': 51 }
+            ];
+
+            return chains.find(match => match.type === type)
+        },
+
         async getApiForType(type) {
             const apis = [
                 { 'type': 'Ark', 'url': 'https://api.ark.land/api/' },

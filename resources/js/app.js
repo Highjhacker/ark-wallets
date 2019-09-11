@@ -52,14 +52,14 @@ const store = new Vuex.Store({
         },
 
         updateWallet(state, payload) {
-            let index = state.wallets.findIndex(item => item.address === payload.address);
+            const index = state.wallets.findIndex(item => item.address === payload.address);
             state.wallets.splice(index, 1);
 
             state.wallets.push(payload.payload);
         },
 
         deleteWallet(state, address) {
-            let index = state.wallets.findIndex(item => item.address === address);
+            const index = state.wallets.findIndex(item => item.address === address);
             state.wallets.splice(index, 1);
         },
 
@@ -92,9 +92,11 @@ const store = new Vuex.Store({
         },
 
         wallet: (state) => (address) => {
-            return state.wallets.filter(item => {
-                return item.address === address
-            })[0];
+            if(state.wallets.length > 0) {
+                return state.wallets.filter(item => {
+                    return item.address === address
+                })[0];
+            }
         },
         wallets: state => {
             return state.wallets
