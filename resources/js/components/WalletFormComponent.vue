@@ -73,10 +73,7 @@
 
                     this.isProcessing = true;
 
-                    let existing = localStorage.getItem("addresses");
-                    existing = existing ? JSON.parse(existing) : [];
-
-                    if(existing.find(wallet => wallet.address === this.walletAddress)) {
+                    if(this.$store.getters.wallet(this.walletAddress)) {
                         this.isProcessing = false;
                         return await this.makeToast("Wallet already monitored.", "exclamation-triangle", "error");
                     }
@@ -123,11 +120,7 @@
                         'delegatePayoutInterval': delegateShareData.data.payout_interval
                     };
 
-                    this.$store.commit('addWallet', walletData);
-
-                    existing.push(walletData);
-
-                    localStorage.setItem("addresses", JSON.stringify(existing));
+                    this.$store.dispatch('addWallet', walletData);
 
                     this.isProcessing = false;
 
@@ -143,8 +136,13 @@
     .toasted.bubble.error {
         background-color: #f1373a;
     }
+    
     .toasted.bubble.success {
         background-color: #28a745;
+    }
+    
+    .toasted.bubble.warning {
+        background-color: #f1b637;
     }
 
     .hover\:bg-blue-custom:hover {

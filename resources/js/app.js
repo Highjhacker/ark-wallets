@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 import Vuex from 'vuex'
+import VuexPersist from 'vuex-persist';
+import localforage from 'localforage';
 import Toasted from 'vue-toasted';
 import VTooltip from 'v-tooltip'
 import toast from "./mixins";
@@ -21,12 +23,21 @@ Vue.component('wallets-gallery-component', require('./components/WalletsGalleryC
 Vue.component('navbar-component', require('./components/NavbarComponent.vue').default);
 Vue.component('modal-component', require('./components/ImportModalComponent.vue').default);
 
+const vuexLocalStorage = new VuexPersist({
+    key: 'addresses', 
+    storage: localforage,
+    asyncStorage: true
+})
+
 const store = new Vuex.Store({
     state: {
         showArkvatars: true,
         showImportModal: false,
-        wallets: JSON.parse(localStorage.getItem("addresses")) || [],
+        wallets: [],
     },
+
+    plugins: [vuexLocalStorage.plugin],
+    
     mutations: {
         toggleArkvatars (state) {
             state.showArkvatars = !state.showArkvatars;
@@ -40,10 +51,37 @@ const store = new Vuex.Store({
             state.wallets.push(wallet);
         },
 
+        updateWallet(state, payload) {
+            let index = state.wallets.findIndex(item => item.address === payload.address);
+            state.wallets.splice(index, 1);
+
+            state.wallets.push(payload.payload);
+        },
+
+        deleteWallet(state, address) {
+            let index = state.wallets.findIndex(item => item.address === address);
+            state.wallets.splice(index, 1);
+        },
+
         clearWallets(state) {
             state.wallets = [];
         }
     },
+
+    actions: {
+        addWallet({commit}, wallet) {
+            commit('addWallet', wallet);
+        },
+
+        updateWallet({commit}, payload) {
+            commit('updateWallet', {address: payload.address, payload: payload.payload});
+        },
+
+        deleteWallet({commit}, wallet) {
+            commit('deleteWallet', wallet);
+        }
+    },
+    
     getters: {
         arkvatars: state => {
             return state.showArkvatars;
@@ -53,7 +91,7 @@ const store = new Vuex.Store({
             return state.showImportModal;
         },
 
-        walletByAddress: (state) => (address) => {
+        wallet: (state) => (address) => {
             return state.wallets.filter(item => {
                 return item.address === address
             })[0];
