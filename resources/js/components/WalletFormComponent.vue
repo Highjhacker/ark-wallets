@@ -37,6 +37,7 @@
 
     export default {
         components: {Stretch},
+        
         data() {
             return {
                 walletAddress: null,

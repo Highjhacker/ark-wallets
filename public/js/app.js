@@ -1936,6 +1936,7 @@ module.exports = function isBuffer (obj) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue_loading_spinner__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-loading-spinner */ "./node_modules/vue-loading-spinner/src/index.js");
 
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -1977,10 +1978,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    Pencil: vue_loading_spinner__WEBPACK_IMPORTED_MODULE_1__["Pencil"]
+  },
   data: function data() {
     return {
-      walletsJson: null
+      walletsJson: null,
+      loading: false
     };
   },
   methods: {
@@ -1992,9 +2002,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                this.walletsJson = null;
                 this.$store.commit('handleImportModal');
 
-              case 1:
+              case 2:
               case "end":
                 return _context.stop();
             }
@@ -2114,104 +2125,98 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _submit = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
-        var validatedInput, existing, importedAddresses, type, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, address, wallet, merged, filtered, _merged, _filtered;
+        var validatedInput, existing, importedAddresses, type, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, address, wallet, merged, filtered, _merged, _filtered, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _wallet;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 _context4.prev = 0;
+                this.loading = true;
                 validatedInput = JSON.parse(this.walletsJson);
                 existing = localStorage.getItem("addresses");
                 existing = existing ? JSON.parse(existing) : [];
 
                 if (!validatedInput) {
-                  _context4.next = 47;
+                  _context4.next = 68;
                   break;
                 }
 
                 if (!validatedInput.hasOwnProperty('meta')) {
-                  _context4.next = 42;
+                  _context4.next = 43;
                   break;
                 }
 
-                _context4.next = 8;
+                _context4.next = 9;
                 return this.getAddressesFromArkWalletJSON(validatedInput);
 
-              case 8:
+              case 9:
                 importedAddresses = _context4.sent;
                 type = validatedInput.network.name;
-                type = type.charAt(0) + type.slice(1).toLowerCase(); //let temp = [];
-
+                type = type.charAt(0) + type.slice(1).toLowerCase();
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context4.prev = 14;
+                _context4.prev = 15;
                 _iterator = importedAddresses[Symbol.iterator]();
 
-              case 16:
+              case 17:
                 if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-                  _context4.next = 25;
+                  _context4.next = 26;
                   break;
                 }
 
                 address = _step.value;
-                _context4.next = 20;
+                _context4.next = 21;
                 return this.makeWalletFromAddress(address, type);
 
-              case 20:
+              case 21:
                 wallet = _context4.sent;
-                this.$store.commit('addWallet', wallet); //temp.push(wallet);
 
-              case 22:
+                if (!this.$store.getters.walletByAddress(address)) {
+                  this.$store.commit('addWallet', wallet);
+                }
+
+              case 23:
                 _iteratorNormalCompletion = true;
-                _context4.next = 16;
+                _context4.next = 17;
                 break;
 
-              case 25:
-                _context4.next = 31;
+              case 26:
+                _context4.next = 32;
                 break;
 
-              case 27:
-                _context4.prev = 27;
-                _context4.t0 = _context4["catch"](14);
+              case 28:
+                _context4.prev = 28;
+                _context4.t0 = _context4["catch"](15);
                 _didIteratorError = true;
                 _iteratorError = _context4.t0;
 
-              case 31:
-                _context4.prev = 31;
+              case 32:
                 _context4.prev = 32;
+                _context4.prev = 33;
 
                 if (!_iteratorNormalCompletion && _iterator["return"] != null) {
                   _iterator["return"]();
                 }
 
-              case 34:
-                _context4.prev = 34;
+              case 35:
+                _context4.prev = 35;
 
                 if (!_didIteratorError) {
-                  _context4.next = 37;
+                  _context4.next = 38;
                   break;
                 }
 
                 throw _iteratorError;
 
-              case 37:
-                return _context4.finish(34);
-
               case 38:
-                return _context4.finish(31);
+                return _context4.finish(35);
 
               case 39:
-                /*
-                const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
-                
-                await importedAddresses.forEach(async (address) => {
-                    await waitFor(50); 
-                    this.$store.commit('addWallet', await this.makeWalletFromAddress(address, type));
-                    //temp.push(wallet);
-                });
-                */
+                return _context4.finish(32);
+
+              case 40:
                 if (existing.length > 0) {
                   merged = existing.concat(this.$store.state.wallets);
                   filtered = _.uniqBy(merged, "address");
@@ -2220,36 +2225,81 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   localStorage.setItem("addresses", JSON.stringify(this.$store.state.wallets));
                 }
 
-                _context4.next = 45;
+                _context4.next = 65;
                 break;
 
-              case 42:
+              case 43:
                 _merged = existing.concat(validatedInput);
                 _filtered = _.uniqBy(_merged, "address");
-                localStorage.setItem("addresses", JSON.stringify(_filtered));
+                _iteratorNormalCompletion2 = true;
+                _didIteratorError2 = false;
+                _iteratorError2 = undefined;
+                _context4.prev = 48;
 
-              case 45:
-                _context4.next = 47;
-                return this.makeToast("Wallets imported !", "check-circle", "success");
+                for (_iterator2 = _filtered[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                  _wallet = _step2.value;
+                  this.$store.commit('addWallet', _wallet);
+                }
 
-              case 47:
-                _context4.next = 55;
+                _context4.next = 56;
                 break;
 
-              case 49:
-                _context4.prev = 49;
-                _context4.t1 = _context4["catch"](0);
-                console.log(_context4.t1);
-                console.log("Invalid json");
-                _context4.next = 55;
+              case 52:
+                _context4.prev = 52;
+                _context4.t1 = _context4["catch"](48);
+                _didIteratorError2 = true;
+                _iteratorError2 = _context4.t1;
+
+              case 56:
+                _context4.prev = 56;
+                _context4.prev = 57;
+
+                if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                  _iterator2["return"]();
+                }
+
+              case 59:
+                _context4.prev = 59;
+
+                if (!_didIteratorError2) {
+                  _context4.next = 62;
+                  break;
+                }
+
+                throw _iteratorError2;
+
+              case 62:
+                return _context4.finish(59);
+
+              case 63:
+                return _context4.finish(56);
+
+              case 64:
+                localStorage.setItem("addresses", JSON.stringify(_filtered));
+
+              case 65:
+                this.loading = false;
+                _context4.next = 68;
+                return this.makeToast("Wallets imported !", "check-circle", "success");
+
+              case 68:
+                _context4.next = 76;
+                break;
+
+              case 70:
+                _context4.prev = 70;
+                _context4.t2 = _context4["catch"](0);
+                this.walletsJson = null;
+                this.loading = false;
+                _context4.next = 76;
                 return this.makeToast("Invalid JSON format", "times-circle", "error");
 
-              case 55:
+              case 76:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[0, 49], [14, 27, 31, 39], [32,, 34, 38]]);
+        }, _callee4, this, [[0, 70], [15, 28, 32, 40], [33,, 35, 39], [48, 52, 56, 64], [57,, 59, 63]]);
       }));
 
       function submit() {
@@ -43814,20 +43864,38 @@ var render = function() {
                     "div",
                     { staticClass: "inline-flex items-center justify-between" },
                     [
-                      _c(
-                        "button",
-                        {
-                          staticClass:
-                            "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline",
-                          attrs: { type: "button" },
-                          on: { click: _vm.submit }
-                        },
-                        [
-                          _vm._v(
-                            "\n                        Import\n                    "
+                      !_vm.loading
+                        ? _c(
+                            "button",
+                            {
+                              staticClass:
+                                "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 w-40 rounded focus:outline-none focus:shadow-outline",
+                              attrs: { type: "button" },
+                              on: { click: _vm.submit }
+                            },
+                            [
+                              _vm._v(
+                                "\n                        Import\n                    "
+                              )
+                            ]
                           )
-                        ]
-                      )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.loading
+                        ? _c(
+                            "button",
+                            {
+                              staticClass:
+                                "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 w-40 rounded focus:outline-none focus:shadow-outline opacity-50",
+                              attrs: { type: "button" }
+                            },
+                            [
+                              _vm._v(
+                                "\n                        Importing...\n                    "
+                              )
+                            ]
+                          )
+                        : _vm._e()
                     ]
                   ),
                   _vm._v(" "),
@@ -43835,7 +43903,7 @@ var render = function() {
                     "button",
                     {
                       staticClass:
-                        "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline",
+                        "bg-red-500 hover:bg-red-700 text-white font-bold py-2 w-40 rounded focus:outline-none focus:shadow-outline",
                       on: {
                         click: function($event) {
                           $event.preventDefault()
@@ -66321,8 +66389,6 @@ Vue.component('wallet-form-component', __webpack_require__(/*! ./components/Wall
 Vue.component('wallets-gallery-component', __webpack_require__(/*! ./components/WalletsGalleryComponent.vue */ "./resources/js/components/WalletsGalleryComponent.vue")["default"]);
 Vue.component('navbar-component', __webpack_require__(/*! ./components/NavbarComponent.vue */ "./resources/js/components/NavbarComponent.vue")["default"]);
 Vue.component('modal-component', __webpack_require__(/*! ./components/ImportModalComponent.vue */ "./resources/js/components/ImportModalComponent.vue")["default"]);
-/** VueX Store **/
-
 var store = new vuex__WEBPACK_IMPORTED_MODULE_0__["default"].Store({
   state: {
     showArkvatars: true,
@@ -66344,6 +66410,12 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_0__["default"].Store({
     }
   },
   getters: {
+    arkvatars: function arkvatars(state) {
+      return state.showArkvatars;
+    },
+    importModal: function importModal(state) {
+      return state.showImportModal;
+    },
     walletByAddress: function walletByAddress(state) {
       return function (address) {
         return state.wallets.filter(function (item) {
@@ -66353,12 +66425,6 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_0__["default"].Store({
     },
     wallets: function wallets(state) {
       return state.wallets;
-    },
-    arkvatars: function arkvatars(state) {
-      return state.showArkvatars;
-    },
-    importModal: function importModal(state) {
-      return state.showImportModal;
     }
   }
 }); // eslint-disable-next-line
