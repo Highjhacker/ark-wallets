@@ -127,7 +127,7 @@
             await this.getDataFromAddress();
 
             setInterval(() => {
-                this.checkIfDelegateIsGreen();
+                this.isDelegateGreen();
             }, 60000);
         },
 
@@ -142,15 +142,13 @@
 
                 let filtered = existing.filter(wallet => wallet.address !== address);
 
-                console.log(filtered);
-
                 let walletData = await this.getDataFromAddress();
 
                 filtered.push(walletData);
-
+                
                 localStorage.setItem("addresses", JSON.stringify(filtered));
 
-                await this.makeToast("Wallet Updated", "check-circle", "success");
+                await this.makeToast("Wallet Updated.", "check-circle", "success");
             },
 
             async removeCard(address) {
@@ -166,23 +164,11 @@
                 await this.makeToast("Wallet removed", "check-circle", "success");
             },
 
-            async getWalletBalance() {
-                const request = await axios.get(`${this.wallet.apiUrl}wallets/${this.wallet.address}`);
-
-                return request.data.data.balance;
-            },
-
-            async getDelegatePublicKey() {
-                const request = await axios.get(`${this.wallet.apiUrl}wallets/${this.wallet.address}`);
-
-                return request.data.data.vote;
-            },
-
             async isDelegateActive() {
                 return (this.delegateRank <= 51 ? this.delegateIsActive = true : this.delegateIsActive = false);
             },
 
-            async checkIfDelegateIsGreen() {
+            async isDelegateGreen() {
                 return (this.delegateIsActive && this.delegateIsForging ? this.delegateIsGreen = true : this.delegateIsGreen = false);
             },
 
@@ -195,11 +181,10 @@
 
             async getDataFromAddress() {
                 try {
-                    this.walletBalance = await this.getWalletBalance();
-                    this.delegatePublicKey = await this.getDelegatePublicKey();
+                    [this.walletBalance, this.delegatePublicKey] = await this.getWalletBalanceAndDelegatePublicKey(this.wallet.apiUrl, this.wallet.address);
 
                     if(this.delegatePublicKey) {
-                        // Fetch information about user's delegate.
+                        // Fetch information about user's delegate
                         const walletDelegate = await this.getDelegateData(this.wallet.apiUrl, this.delegatePublicKey);
                         this.delegateVotesTotal = walletDelegate.data.data.votes;
                         this.delegateRank = walletDelegate.data.data.rank;
@@ -211,6 +196,7 @@
                         this.delegateSharePercentage = delegateShare.data.payout_percent;
                         this.delegatePayoutInterval = delegateShare.data.payout_interval;
 
+                        // Can probably remove that 
                         if(this.wallet.type === 'Ark') {
                             this.delegateUsername = delegateShare.data.name;
                         }
@@ -222,7 +208,7 @@
                         await this.isDelegateActive();
 
                         // Check if delegate is green
-                        await this.checkIfDelegateIsGreen();
+                        await this.isDelegateGreen();
 
                         return {
                             'id': this.wallet.id,

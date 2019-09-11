@@ -33,11 +33,11 @@
 </template>
 
 <script>
-    import * as Arkvatar from 'arkvatar-ts';
     import {Stretch} from 'vue-loading-spinner';
 
     export default {
         components: {Stretch},
+        
         data() {
             return {
                 walletAddress: null,
@@ -52,35 +52,6 @@
         },
 
         methods: {
-            async getExplorerForType(type) {
-                const explorers = [
-                    {'type': 'Ark', 'url': 'https://explorer.ark.io/'},
-                    {'type': 'Qredit', 'url': 'https://explorer.qredit.io/'}
-                ];
-
-                return explorers.find(match => match.type === type)
-            },
-
-            async getApiForType(type) {
-                const apis = [
-                    {'type': 'Ark', 'url': 'https://api.ark.land/api/'},
-                    {'type': 'Qredit', 'url': 'https://api.qreditnode.com/api/'}
-                ];
-
-                return apis.find(match => match.type === type)
-            },
-
-            async queryApi(type, address) {
-                try {
-                    const api = await this.getApiForType(type);
-
-                    return await axios.get(`${api.url}wallets/${address}`);
-                } catch (error) {
-                    this.isProcessing = false;
-                    return await this.makeToast("Invalid type for the submitted Cryptocurrency.", "exclamation-triangle", "error");
-                }
-            },
-
             async validateAddress(address) {
                 try {
                     return await axios.get(`https://retos.io/api/verify/${address}`, {}, {headers: {'Content-Type': 'application/json'}});
@@ -88,19 +59,6 @@
                     if (error.response.status === 422) {
                         return true;
                     }
-                }
-            },
-
-            async getArkvatar(address) {
-                const data = await Arkvatar.show(address);
-
-                if (data.status === 200) {
-                    if (data.data.url) {
-                        return data.data.url;
-                    }
-                }
-                if (data.response.status === 404) {
-                    return "https://arkvatars.s3.eu-west-3.amazonaws.com/arkvatars/public/ALhWkv1uGfujoVdRRiaFzrKzCwJvPkz7hi.png";
                 }
             },
 

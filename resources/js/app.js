@@ -21,7 +21,6 @@ Vue.component('wallets-gallery-component', require('./components/WalletsGalleryC
 Vue.component('navbar-component', require('./components/NavbarComponent.vue').default);
 Vue.component('modal-component', require('./components/ImportModalComponent.vue').default);
 
-/** VueX Store **/
 const store = new Vuex.Store({
     state: {
         showArkvatars: true,
@@ -46,6 +45,14 @@ const store = new Vuex.Store({
         }
     },
     getters: {
+        arkvatars: state => {
+            return state.showArkvatars;
+        },
+
+        importModal: state => {
+            return state.showImportModal;
+        },
+
         walletByAddress: (state) => (address) => {
             return state.wallets.filter(item => {
                 return item.address === address
@@ -54,14 +61,6 @@ const store = new Vuex.Store({
         wallets: state => {
             return state.wallets
         },
-
-        arkvatars: state => {
-            return state.showArkvatars;
-        },
-
-        importModal: state => {
-            return state.showImportModal;
-        }
     }
 });
 
