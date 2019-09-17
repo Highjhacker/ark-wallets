@@ -39,68 +39,63 @@ const store = new Vuex.Store({
     plugins: [vuexLocalStorage.plugin],
     
     mutations: {
-        toggleArkvatars (state) {
+        toggleArkvatars: (state) => {
             state.showArkvatars = !state.showArkvatars;
         },
 
-        handleImportModal (state) {
+        handleImportModal: (state) => {
             state.showImportModal = !state.showImportModal;
         },
 
-        addWallet(state, wallet) {
+        addWallet: (state, wallet) => {
             state.wallets.push(wallet);
         },
 
-        updateWallet(state, payload) {
+        updateWallet: (state, payload) => {
             const index = state.wallets.findIndex(item => item.address === payload.address);
             state.wallets.splice(index, 1);
 
             state.wallets.push(payload.payload);
         },
 
-        deleteWallet(state, address) {
+        deleteWallet: (state, address) => {
             const index = state.wallets.findIndex(item => item.address === address);
             state.wallets.splice(index, 1);
         },
 
-        clearWallets(state) {
+        clearWallets: (state) => {
             state.wallets = [];
         }
     },
 
     actions: {
-        addWallet({commit}, wallet) {
+        addWallet: ({commit}, wallet) => {
             commit('addWallet', wallet);
         },
 
-        updateWallet({commit}, payload) {
+        updateWallet: ({commit}, payload) => {
             commit('updateWallet', {address: payload.address, payload: payload.payload});
         },
 
-        deleteWallet({commit}, wallet) {
+        deleteWallet: ({commit}, wallet) => {
             commit('deleteWallet', wallet);
         }
     },
     
     getters: {
-        arkvatars: state => {
-            return state.showArkvatars;
-        },
+        arkvatars: state => state.showArkvatars,
 
-        importModal: state => {
-            return state.showImportModal;
-        },
+        importModal: state => state.showImportModal,
 
         wallet: (state) => (address) => {
             if(state.wallets.length > 0) {
-                return state.wallets.filter(item => {
+                return state.wallets.find(item => {
                     return item.address === address
-                })[0];
+                });
             }
         },
-        wallets: state => {
-            return state.wallets
-        },
+
+        wallets: state => state.wallets
     }
 });
 

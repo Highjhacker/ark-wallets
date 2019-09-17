@@ -51,7 +51,7 @@
 
         computed: {
             orderedWallets: function () {
-                return _.orderBy(this.$store.getters.wallets, 'id');
+                return this.$store.getters.wallets.slice().sort((a, b) => a.id - b.id);
             }
         },
 
