@@ -1,18 +1,18 @@
 <template>
   <div>
-    <form 
-      method="POST" 
-      class="w-full max-w-sm" 
+    <form
+      method="POST"
+      class="w-full max-w-sm"
       @submit.prevent="validateForm"
     >
       <div class="md:flex md:items-center mb-6">
         <div class="md:w-2/3">
           <input
             id="walletAddress"
-            v-model="walletAddress" 
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" 
-            name="walletAddress" 
-            type="text" 
+            v-model="walletAddress"
+            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="walletAddress"
+            type="text"
             placeholder="Valid Wallet Address"
           >
         </div>
@@ -21,15 +21,15 @@
           <select
             id="grid-state"
             v-model="selected"
-            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500" 
+            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
           >
             <option>Ark</option>
             <option>Qredit</option>
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-            <svg 
-              class="fill-current h-4 w-4" 
-              xmlns="http://www.w3.org/2000/svg" 
+            <svg
+              class="fill-current h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
             >
               <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
@@ -40,16 +40,16 @@
 
       <div class="md:flex md:items-center h-8">
         <div class="md:w-2/3">
-          <button 
-            v-if="!isProcessing" 
-            class="hover:bg-blue-custom bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16" 
+          <button
+            v-if="!isProcessing"
+            class="hover:bg-blue-custom bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16"
             type="submit"
           >
             Add Wallet
           </button>
 
-          <button 
-            v-if="isProcessing" 
+          <button
+            v-if="isProcessing"
             class="bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider w-full h-16"
           >
             <Stretch v-if="isProcessing" />
@@ -65,7 +65,7 @@
 
     export default {
         components: {Stretch},
-        
+
         data() {
             return {
                 walletAddress: null,
@@ -86,7 +86,7 @@
                     if (usernameCheck) {
                         return true;
                     }
-                    return await axios.get(`https://retos.io/api/verify/${address}`, {}, {headers: {'Content-Type': 'application/json'}});
+                    return await axios.get(`https://retos.dev/api/verify/${address}`, {}, {headers: {'Content-Type': 'application/json'}});
                 } catch (error) {
                     if (error.response.status === 422) {
                         return true;
@@ -99,7 +99,7 @@
                 const api = await this.getApiForType(this.type);
                 const delegatesResponse = await this.getDelegatesUsernames(api.url)
                 const filtered = delegatesResponse.data.data.map(wallet => wallet.username);
-                
+
                 if (filtered.includes(username)) {
                     return true;
                 }
@@ -178,11 +178,11 @@
     .toasted.bubble.error {
         background-color: #f1373a;
     }
-    
+
     .toasted.bubble.success {
         background-color: #28a745;
     }
-    
+
     .toasted.bubble.warning {
         background-color: #f1b637;
     }
