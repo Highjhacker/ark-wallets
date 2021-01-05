@@ -11,7 +11,7 @@
         "eslint": "./node_modules/.bin/eslint --ext .js,.vue  resources/js/components"
     },
     "devDependencies": {
-        "axios": "^0.19",
+        "axios": "^0.21",
         "cross-env": "^5.1",
         "eslint": "^6.3.0",
         "eslint-plugin-vue": "^5.2.3",
